@@ -41,6 +41,13 @@ Se usa zod para normalizar los datos del API y para controlar errores de tipo o 
 
 Es el único estado global compartido entre vistas. El resto del estado (listado, filtro, detalle) es local a cada vista o se resuelve con composables.
 
-## Notas
+## Notas sobre el API
 
-_(Se irán añadiendo: supuestos sobre el API, tratamiento de datos inconsistentes, etc.)_
+Los datos se normalizan en `src/api/schemas.ts` antes de llegar al resto de la aplicación:
+
+- Los campos de pantalla llegan intercambiados: `displayResolution` contiene el tamaño en pulgadas y `displaySize` la resolución en píxeles. Se exponen como `screenSize` y `screenResolution`.
+- `dimentions` y `secondaryCmera` se renombran a `dimensions` y `secondaryCamera`.
+- Los valores vacíos (`""` o `"-"`) se convierten en `null`, y la interfaz muestra un valor por defecto. Esto afecta, por ejemplo, a `price` y `weight`, que además se convierten a número.
+- Los campos que llegan como lista de textos se unen en un único texto.
+
+Las respuestas del API ya normalizadas se guardan en `localStorage` durante 1 hora.
