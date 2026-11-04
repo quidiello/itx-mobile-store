@@ -19,6 +19,10 @@ Mini SPA para comprar dispositivos móviles: listado de productos (PLP) y ficha 
 | `npm run lint`  | Comprobación de código (oxlint + ESLint) |
 | `npm run fix`   | Aplica las correcciones automáticas      |
 
+## Configuración
+
+La URL del API se define en la variable de entorno `VITE_API_BASE_URL`, que ya viene en el archivo `.env`. Para usar otra en local, crea un `.env.local` con ese mismo nombre.
+
 ## Stack
 
 Vue 3 (Composition API, `<script setup>`) · TypeScript · Vite · Vue Router · Pinia · Zod · Vitest + Vue Test Utils · ESLint + oxlint + Prettier.
