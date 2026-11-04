@@ -14,8 +14,8 @@ const inputId = useId()
 
 <style scoped>
 div {
+  width: 100%;
   max-width: 24rem;
-  margin: 0 0 var(--space-5) auto;
 }
 
 input {

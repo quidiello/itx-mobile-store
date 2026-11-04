@@ -23,7 +23,12 @@ const product = productDetailSchema.parse(details.normal)
 async function mountAt(path: string) {
   const router = createRouter({ history: createMemoryHistory(), routes })
   await router.push(path)
-  const wrapper = mount(ProductDetailView, { global: { plugins: [router, createPinia()] } })
+  const wrapper = mount(ProductDetailView, {
+    global: {
+      plugins: [router, createPinia()],
+      stubs: { PageToolbar: { template: '<div><slot /></div>' } },
+    },
+  })
   await flushPromises()
   return { wrapper, router }
 }

@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
 import AppSkeleton from '@/components/AppSkeleton.vue'
+import PageToolbar from '@/components/PageToolbar.vue'
 import ProductActions from '@/components/ProductActions.vue'
 import ProductDescription from '@/components/ProductDescription.vue'
 import ProductImage from '@/components/ProductImage.vue'
@@ -17,7 +18,9 @@ const name = computed(
 
 <template>
   <main>
-    <RouterLink to="/">Back to the product list</RouterLink>
+    <PageToolbar>
+      <RouterLink to="/">Back to the product list</RouterLink>
+    </PageToolbar>
 
     <div v-if="loading" class="layout">
       <AppSkeleton height="20rem" />

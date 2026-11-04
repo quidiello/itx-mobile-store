@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppSkeleton from '@/components/AppSkeleton.vue'
+import PageToolbar from '@/components/PageToolbar.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import { useProducts } from '@/composables/useProducts'
@@ -23,7 +24,9 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
 
 <template>
   <main>
-    <SearchBar v-model="query" />
+    <PageToolbar>
+      <SearchBar v-model="query" />
+    </PageToolbar>
 
     <div v-if="loading" class="grid">
       <AppSkeleton v-for="n in 8" :key="n" height="16rem" />
