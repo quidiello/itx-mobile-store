@@ -41,14 +41,23 @@ dl {
 
 .row {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.row:last-child {
+  border-bottom: 0;
 }
 
 dt {
-  font-weight: 600;
+  flex: 0 0 9rem;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
 }
 
 dd {
   margin: 0;
+  font-weight: 500;
 }
 </style>

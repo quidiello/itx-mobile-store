@@ -47,7 +47,7 @@ describe('ProductDescription', () => {
   it('tells that the price is not available when there is none', () => {
     const wrapper = mountDescription(withoutData)
 
-    expect(valueOf(wrapper, 'Price')).toBe('Price not available')
+    expect(valueOf(wrapper, 'Price')).toBe('Not available')
   })
 
   it('shows a dash when the brand, the model or a specification is missing', () => {

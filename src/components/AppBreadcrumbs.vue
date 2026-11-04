@@ -22,14 +22,23 @@ const isProductDetail = computed(() => route.name === 'product-detail')
 <style scoped>
 ol {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  gap: var(--space-2);
   margin: 0;
   padding: 0;
   list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+li[aria-current='page'] {
+  color: var(--color-text);
+  font-weight: 500;
 }
 
 li + li::before {
-  content: '>';
-  margin-right: 0.5rem;
+  content: '/';
+  margin-right: var(--space-2);
+  color: var(--color-text-muted);
 }
 </style>

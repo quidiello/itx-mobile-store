@@ -13,7 +13,8 @@ vi.mock('@/api', () => ({ api: { addToCart: vi.fn<Api['addToCart']>() } }))
 const addToCart = vi.mocked(api.addToCart)
 
 const twoStorages = productDetailSchema.parse(details.normal)
-const singleOptions = productDetailSchema.parse(details.sinPrecio)
+const withoutPrice = productDetailSchema.parse(details.sinPrecio)
+const singleOptions: ProductDetail = { ...withoutPrice, price: 100 }
 const manyColors = productDetailSchema.parse(details.muchosColores)
 const noOptions: ProductDetail = { ...twoStorages, options: { colors: [], storages: [] } }
 
@@ -120,6 +121,13 @@ describe('ProductActions', () => {
       await radio(wrapper, 'Storage', '32 GB').setValue(true)
 
       expect(button(wrapper).element.disabled).toBe(false)
+    })
+
+    it('is disabled and says so when the product has no price', () => {
+      const { wrapper } = mountActions(withoutPrice)
+
+      expect(button(wrapper).element.disabled).toBe(true)
+      expect(button(wrapper).text()).toBe('Not available')
     })
 
     it('is enabled at once when each group has a single option', () => {

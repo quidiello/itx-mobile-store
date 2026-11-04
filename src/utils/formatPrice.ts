@@ -8,6 +8,6 @@ const wholeFormatter = new Intl.NumberFormat(config.locale, {
 const fullFormatter = new Intl.NumberFormat(config.locale, options)
 
 export function formatPrice(price: number | null) {
-  if (price === null) return 'Price not available'
+  if (price === null) return 'Not available'
   return (Number.isInteger(price) ? wholeFormatter : fullFormatter).format(price)
 }

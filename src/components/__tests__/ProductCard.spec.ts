@@ -89,6 +89,6 @@ describe('ProductCard', () => {
   it('tells that the price is not available when there is none', () => {
     const wrapper = mountCard({ ...product, price: null })
 
-    expect(wrapper.text()).toContain('Price not available')
+    expect(wrapper.text()).toContain('Not available')
   })
 })

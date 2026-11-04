@@ -45,8 +45,8 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
 <style scoped>
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(max(12rem, calc((100% - 3rem) / 4)), 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(max(12rem, calc((100% - 4.5rem) / 4)), 1fr));
+  gap: var(--space-5);
   margin: 0;
   padding: 0;
   list-style: none;

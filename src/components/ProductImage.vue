@@ -28,6 +28,11 @@ const imageUrl = computed(() => (failed.value ? null : props.src))
 <style scoped>
 .image {
   aspect-ratio: 1;
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
 }
 
 img {

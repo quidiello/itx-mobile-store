@@ -15,7 +15,10 @@ const result = ref<'added' | 'failed' | null>(null)
 const hasOptions = computed(
   () => props.product.options.storages.length > 0 && props.product.options.colors.length > 0,
 )
-const canAdd = computed(() => storageCode.value !== null && colorCode.value !== null)
+const hasPrice = computed(() => props.product.price !== null)
+const canAdd = computed(
+  () => hasPrice.value && storageCode.value !== null && colorCode.value !== null,
+)
 
 function onlyOption(options: ProductOption[]) {
   return options.length === 1 ? (options[0]?.code ?? null) : null
@@ -75,7 +78,7 @@ async function add() {
     <p v-if="!hasOptions">No options available</p>
 
     <button type="submit" :disabled="!canAdd || adding">
-      {{ adding ? 'Adding…' : 'Add to cart' }}
+      {{ adding ? 'Adding…' : hasPrice ? 'Add to cart' : 'Not available' }}
     </button>
 
     <p role="status">{{ result === 'added' ? 'Added to cart' : '' }}</p>
@@ -87,14 +90,63 @@ async function add() {
 fieldset {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin: 0 0 1rem;
+  gap: var(--space-2);
+  margin: 0 0 var(--space-4);
   padding: 0;
   border: 0;
 }
 
 legend {
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
+  padding: 0;
+  font-size: var(--text-sm);
   font-weight: 600;
+}
+
+fieldset label {
+  position: relative;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+fieldset label:hover {
+  border-color: var(--color-accent);
+}
+
+fieldset label:has(input:checked) {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+fieldset label:has(input:focus-visible) {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+fieldset input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+button {
+  width: 100%;
+}
+
+[role='status'] {
+  margin: var(--space-3) 0 0;
+  color: var(--color-success);
+  font-size: var(--text-sm);
+  font-weight: 500;
 }
 </style>

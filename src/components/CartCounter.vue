@@ -24,7 +24,7 @@ const description = computed(() => `Cart, ${cart.count} ${cart.count === 1 ? 'it
       <circle cx="18" cy="20" r="1" />
       <path d="M2 3h3l2.5 12h11l2-8H6" />
     </svg>
-    <span aria-hidden="true">{{ cart.count }}</span>
+    <span class="count" aria-hidden="true">{{ cart.count }}</span>
     <span class="sr-only">{{ description }}</span>
   </div>
 </template>
@@ -33,7 +33,21 @@ const description = computed(() => `Cart, ${cart.count} ${cart.count === 1 ? 'it
 .cart {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: var(--space-2);
+  color: var(--color-text);
+}
+
+.count {
+  min-width: 1.5rem;
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  line-height: 1.5rem;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
 }
 
 .sr-only {

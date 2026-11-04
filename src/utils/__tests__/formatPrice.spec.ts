@@ -19,6 +19,6 @@ describe('formatPrice', () => {
   })
 
   it('tells that the price is not available when there is none', () => {
-    expect(formatPrice(null)).toBe('Price not available')
+    expect(formatPrice(null)).toBe('Not available')
   })
 })
