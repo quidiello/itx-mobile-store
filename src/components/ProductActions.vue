@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
 import type { ProductDetail, ProductOption } from '@/api/schemas'
 import { useCartStore } from '@/stores/cart'
 import { formatPrice } from '@/utils/formatPrice'
@@ -12,6 +12,10 @@ const storageCode = ref<number | null>(null)
 const colorCode = ref<number | null>(null)
 const adding = ref(false)
 const result = ref<'added' | 'failed' | null>(null)
+const sheetOpen = ref(false)
+const optionsId = useId()
+const trigger = useTemplateRef('trigger')
+const options = useTemplateRef('options')
 
 const hasOptions = computed(
   () => props.product.options.storages.length > 0 && props.product.options.colors.length > 0,
@@ -38,6 +42,7 @@ watch(
   (product) => {
     storageCode.value = firstOption(product.options.storages)
     colorCode.value = firstOption(product.options.colors)
+    sheetOpen.value = false
   },
   { immediate: true },
 )
@@ -45,6 +50,25 @@ watch(
 watch([storageCode, colorCode, () => props.product], () => {
   result.value = null
 })
+
+watch(sheetOpen, (open) => {
+  document.body.style.overflow = open ? 'hidden' : ''
+})
+
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
+})
+
+async function openSheet() {
+  sheetOpen.value = true
+  await nextTick()
+  options.value?.querySelector<HTMLInputElement>('input:checked')?.focus()
+}
+
+function closeSheet() {
+  sheetOpen.value = false
+  trigger.value?.focus()
+}
 
 async function add() {
   if (storageCode.value === null || colorCode.value === null || adding.value) return
@@ -68,34 +92,71 @@ async function add() {
 
 <template>
   <form @submit.prevent="add">
-    <fieldset>
-      <legend>Storage</legend>
-      <label v-for="option in product.options.storages" :key="option.code">
-        <input v-model="storageCode" type="radio" name="storage" :value="option.code" />
-        {{ option.name }}
-      </label>
-    </fieldset>
+    <div v-if="sheetOpen" class="backdrop" @click="closeSheet" />
 
-    <fieldset>
-      <legend>Color</legend>
-      <label v-for="option in product.options.colors" :key="option.code">
-        <input v-model="colorCode" type="radio" name="color" :value="option.code" />
-        {{ option.name }}
-      </label>
-    </fieldset>
+    <div
+      :id="optionsId"
+      ref="options"
+      class="options"
+      :class="{ open: sheetOpen }"
+      @keydown.esc="closeSheet"
+    >
+      <span class="grab" aria-hidden="true" />
 
-    <p v-if="!hasOptions">No options available</p>
+      <fieldset>
+        <legend>Storage</legend>
+        <label v-for="option in product.options.storages" :key="option.code">
+          <input v-model="storageCode" type="radio" name="storage" :value="option.code" />
+          {{ option.name }}
+        </label>
+      </fieldset>
+
+      <fieldset>
+        <legend>Color</legend>
+        <label v-for="option in product.options.colors" :key="option.code">
+          <input v-model="colorCode" type="radio" name="color" :value="option.code" />
+          {{ option.name }}
+        </label>
+      </fieldset>
+
+      <p v-if="!hasOptions">No options available</p>
+
+      <button type="button" class="done" @click="closeSheet">Done</button>
+    </div>
 
     <div class="buy">
       <div class="messages">
         <p role="status">{{ result === 'added' ? 'Added to cart' : '' }}</p>
         <p v-if="result === 'failed'" role="alert">Could not add the product. Please try again.</p>
       </div>
-      <div class="summary" aria-hidden="true">
+      <button
+        ref="trigger"
+        type="button"
+        class="summary"
+        aria-haspopup="true"
+        :aria-expanded="sheetOpen"
+        :aria-controls="optionsId"
+        @click="openSheet"
+      >
         <strong>{{ formatPrice(product.price) }}</strong>
-        <span>{{ summary }}</span>
-      </div>
-      <button type="submit" :disabled="!canAdd || adding">
+        <span>
+          {{ summary }}
+          <svg
+            viewBox="0 0 24 24"
+            width="14"
+            height="14"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="m6 15 6-6 6 6" />
+          </svg>
+        </span>
+      </button>
+      <button type="submit" class="submit" :disabled="!canAdd || adding">
         {{ adding ? 'Adding…' : hasPrice ? 'Add to cart' : 'Not available' }}
       </button>
     </div>
@@ -155,11 +216,14 @@ fieldset input {
   cursor: pointer;
 }
 
-.summary {
+.summary,
+.done,
+.grab,
+.backdrop {
   display: none;
 }
 
-button {
+.submit {
   width: 100%;
   margin-top: var(--space-3);
   padding: var(--space-3) var(--space-5);
@@ -194,9 +258,22 @@ button {
 
   .summary {
     display: flex;
+    flex: 1;
     flex-direction: column;
+    align-items: flex-start;
     min-width: 0;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    color: var(--color-text);
     font-size: var(--text-xs);
+    font-weight: 400;
+    text-align: left;
+  }
+
+  .summary:hover:not(:disabled) {
+    background: none;
+    color: var(--color-text);
   }
 
   .summary strong {
@@ -205,15 +282,18 @@ button {
   }
 
   .summary span {
-    overflow: hidden;
-    color: var(--color-text-muted);
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: var(--space-1);
+    max-width: 100%;
+    color: var(--color-accent);
+    font-weight: 600;
   }
 
-  button {
-    flex: 1;
+  .submit {
+    flex: none;
     width: auto;
+    min-width: 9.5rem;
     margin-top: 0;
   }
 
@@ -236,6 +316,52 @@ button {
 
   [role='status']:empty {
     display: none;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: block;
+    background: rgb(17 24 39 / 40%);
+  }
+
+  .options {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 30;
+    padding: var(--space-3) var(--space-5) max(var(--space-5), env(safe-area-inset-bottom));
+    border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    visibility: hidden;
+    transform: translateY(100%);
+    transition:
+      transform 0.25s ease,
+      visibility 0.25s;
+  }
+
+  .options.open {
+    visibility: visible;
+    transform: none;
+  }
+
+  .grab {
+    display: block;
+    width: 2rem;
+    height: 4px;
+    margin: 0 auto var(--space-4);
+    border-radius: 2px;
+    background: var(--color-border-strong);
+  }
+
+  .done {
+    display: block;
+    width: 100%;
+    padding: var(--space-3) var(--space-5);
+    border-radius: var(--radius-pill);
   }
 }
 </style>

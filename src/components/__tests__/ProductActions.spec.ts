@@ -48,7 +48,7 @@ function radio(wrapper: Wrapper, legend: string, name: string) {
   return label.get<HTMLInputElement>('input')
 }
 
-const button = (wrapper: Wrapper) => wrapper.get<HTMLButtonElement>('button')
+const button = (wrapper: Wrapper) => wrapper.get<HTMLButtonElement>('button[type="submit"]')
 
 beforeEach(() => {
   addToCart.mockReset()
@@ -282,19 +282,99 @@ describe('ProductActions', () => {
 
       await radio(wrapper, 'Storage', '32 GB').setValue(true)
 
-      expect(summaryOf(wrapper).text()).toContain('32 GB · Black')
-    })
-
-    it('is hidden from assistive technology because the page already says it', () => {
-      const { wrapper } = mountActions()
-
-      expect(summaryOf(wrapper).attributes('aria-hidden')).toBe('true')
+      expect(summaryOf(wrapper).get('span').text()).toBe('32 GB · Black')
     })
 
     it('tells that the price is not available when there is none', () => {
       const { wrapper } = mountActions(withoutPrice)
 
-      expect(summaryOf(wrapper).text()).toContain('Not available')
+      expect(summaryOf(wrapper).get('strong').text()).toBe('Not available')
+    })
+  })
+
+  describe('options sheet on narrow screens', () => {
+    const optionsOf = (wrapper: Wrapper) => wrapper.get('.options')
+
+    it('starts closed', () => {
+      const { wrapper } = mountActions()
+
+      expect(optionsOf(wrapper).classes()).not.toContain('open')
+      expect(wrapper.get('.summary').attributes('aria-expanded')).toBe('false')
+    })
+
+    it('opens when the summary is pressed', async () => {
+      const { wrapper } = mountActions()
+
+      await wrapper.get('.summary').trigger('click')
+
+      expect(optionsOf(wrapper).classes()).toContain('open')
+      expect(wrapper.get('.summary').attributes('aria-expanded')).toBe('true')
+      expect(wrapper.find('.backdrop').exists()).toBe(true)
+    })
+
+    it('points the summary at the options it opens', () => {
+      const { wrapper } = mountActions()
+
+      expect(wrapper.get('.summary').attributes('aria-controls')).toBe(
+        optionsOf(wrapper).attributes('id'),
+      )
+    })
+
+    it('closes when Done is pressed', async () => {
+      const { wrapper } = mountActions()
+      await wrapper.get('.summary').trigger('click')
+
+      await wrapper.get('.done').trigger('click')
+
+      expect(optionsOf(wrapper).classes()).not.toContain('open')
+      expect(wrapper.find('.backdrop').exists()).toBe(false)
+    })
+
+    it('closes when the user presses Escape', async () => {
+      const { wrapper } = mountActions()
+      await wrapper.get('.summary').trigger('click')
+
+      await optionsOf(wrapper).trigger('keydown', { key: 'Escape' })
+
+      expect(optionsOf(wrapper).classes()).not.toContain('open')
+    })
+
+    it('closes when the user presses the backdrop', async () => {
+      const { wrapper } = mountActions()
+      await wrapper.get('.summary').trigger('click')
+
+      await wrapper.get('.backdrop').trigger('click')
+
+      expect(optionsOf(wrapper).classes()).not.toContain('open')
+    })
+
+    it('keeps the choice made inside the sheet', async () => {
+      const { wrapper } = mountActions()
+      await wrapper.get('.summary').trigger('click')
+
+      await radio(wrapper, 'Storage', '32 GB').setValue(true)
+      await wrapper.get('.done').trigger('click')
+
+      expect(wrapper.get('.summary span').text()).toBe('32 GB · Black')
+    })
+
+    it('closes when another product is shown', async () => {
+      const { wrapper } = mountActions()
+      await wrapper.get('.summary').trigger('click')
+
+      await wrapper.setProps({ product: manyColors })
+
+      expect(optionsOf(wrapper).classes()).not.toContain('open')
+    })
+
+    it('releases the scroll of the page when it is removed while open', async () => {
+      const { wrapper } = mountActions()
+      await wrapper.get('.summary').trigger('click')
+      expect(document.body.style.overflow).toBe('hidden')
+
+      wrapper.unmount()
+
+      expect(document.body.style.overflow).toBe('')
     })
   })
 })

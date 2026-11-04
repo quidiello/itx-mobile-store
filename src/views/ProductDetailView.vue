@@ -72,7 +72,7 @@ const name = computed(
           <section class="card">
             <ProductDescription :product="product" />
           </section>
-          <section class="card">
+          <section class="card actions">
             <ProductActions :product="product" />
           </section>
         </div>
@@ -135,7 +135,14 @@ const name = computed(
 
 @media (max-width: 40rem) {
   main {
-    padding-bottom: 7rem;
+    padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  }
+
+  .actions {
+    margin-top: calc(var(--space-4) * -1);
+    padding: 0;
+    background: none;
+    box-shadow: none;
   }
 
   .layout {
