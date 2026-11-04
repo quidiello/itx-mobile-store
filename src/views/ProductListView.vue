@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import AppSkeleton from '@/components/AppSkeleton.vue'
+import BackToTop from '@/components/BackToTop.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import SearchBar from '@/components/SearchBar.vue'
@@ -42,6 +43,8 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
         <ProductCard :product="product" />
       </li>
     </ul>
+
+    <BackToTop />
   </main>
 </template>
 
