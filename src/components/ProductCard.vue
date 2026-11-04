@@ -25,11 +25,13 @@ const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl
       <ProductImagePlaceholder v-else />
     </div>
     <span v-if="product.brand" class="brand">{{ product.brand }}</span>
-    <span v-if="product.model" class="model">{{ product.model }}</span>
-    <span v-if="!product.brand && !product.model" class="model">Unnamed product</span>
-    <span class="price" :class="{ unavailable: product.price === null }">{{
-      formatPrice(product.price)
-    }}</span>
+    <div class="row">
+      <span v-if="product.model" class="model">{{ product.model }}</span>
+      <span v-if="!product.brand && !product.model" class="model">Unnamed product</span>
+      <span class="price" :class="{ unavailable: product.price === null }">{{
+        formatPrice(product.price)
+      }}</span>
+    </div>
   </RouterLink>
 </template>
 
@@ -40,30 +42,35 @@ const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl
   gap: var(--space-1);
   height: 100%;
   padding: var(--space-4);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
   color: var(--color-text);
   text-decoration: none;
   transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease,
-    border-color 0.15s ease;
+    transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1),
+    box-shadow 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .card:hover {
-  border-color: var(--color-accent);
-  box-shadow: var(--shadow-md);
   color: var(--color-text);
   text-decoration: none;
-  transform: translateY(-2px);
+  position: relative;
+  z-index: 1;
+  box-shadow: var(--shadow-md);
+  transform: scale(1.03);
 }
 
 .image {
   aspect-ratio: 1;
   margin-bottom: var(--space-3);
   padding: var(--space-2);
+}
+
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brand {
@@ -74,31 +81,31 @@ const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl
   text-transform: uppercase;
 }
 
-img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+.row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: auto;
 }
 
 .model {
+  min-width: 0;
   font-weight: 500;
 }
 
 .price {
-  margin-top: auto;
-  padding-top: var(--space-3);
+  flex: none;
   font-size: var(--text-lg);
   font-weight: 700;
-  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .price.unavailable {
   color: var(--color-text-muted);
   font-size: var(--text-sm);
   font-weight: 400;
-  letter-spacing: 0;
 }
 
 @media (prefers-reduced-motion: reduce) {

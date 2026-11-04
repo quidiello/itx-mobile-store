@@ -43,6 +43,11 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
 </template>
 
 <style scoped>
+.grid .skeleton {
+  border-radius: var(--radius-xl);
+  background: var(--color-surface);
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(max(12rem, calc((100% - 4.5rem) / 4)), 1fr));
