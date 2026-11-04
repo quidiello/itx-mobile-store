@@ -20,15 +20,15 @@ const canAdd = computed(
   () => hasPrice.value && storageCode.value !== null && colorCode.value !== null,
 )
 
-function onlyOption(options: ProductOption[]) {
-  return options.length === 1 ? (options[0]?.code ?? null) : null
+function firstOption(options: ProductOption[]) {
+  return options[0]?.code ?? null
 }
 
 watch(
   () => props.product,
   (product) => {
-    storageCode.value = onlyOption(product.options.storages)
-    colorCode.value = onlyOption(product.options.colors)
+    storageCode.value = firstOption(product.options.storages)
+    colorCode.value = firstOption(product.options.colors)
   },
   { immediate: true },
 )

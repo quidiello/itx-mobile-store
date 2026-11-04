@@ -86,10 +86,10 @@ describe('ProductActions', () => {
       expect(radio(wrapper, 'Color', 'Black').element.checked).toBe(true)
     })
 
-    it('leaves the choice to the user when there are several options', () => {
+    it('selects the first option by default when there are several', () => {
       const { wrapper } = mountActions()
 
-      expect(radio(wrapper, 'Storage', '16 GB').element.checked).toBe(false)
+      expect(radio(wrapper, 'Storage', '16 GB').element.checked).toBe(true)
       expect(radio(wrapper, 'Storage', '32 GB').element.checked).toBe(false)
     })
 
@@ -107,18 +107,14 @@ describe('ProductActions', () => {
       await wrapper.setProps({ product: manyColors })
 
       expect(radio(wrapper, 'Storage', '512 MB').element.checked).toBe(true)
-      for (const input of group(wrapper, 'Color').findAll<HTMLInputElement>('input')) {
-        expect(input.element.checked).toBe(false)
-      }
+      expect(radio(wrapper, 'Color', 'blue').element.checked).toBe(true)
+      expect(radio(wrapper, 'Color', 'pink').element.checked).toBe(false)
     })
   })
 
   describe('add button', () => {
-    it('is disabled until every group has a selection', async () => {
+    it('is enabled at once because each group starts with an option selected', () => {
       const { wrapper } = mountActions()
-      expect(button(wrapper).element.disabled).toBe(true)
-
-      await radio(wrapper, 'Storage', '32 GB').setValue(true)
 
       expect(button(wrapper).element.disabled).toBe(false)
     })
@@ -150,8 +146,21 @@ describe('ProductActions', () => {
       })
     })
 
-    it('does not send anything while the selection is incomplete', async () => {
+    it('sends the first options when the user does not change anything', async () => {
+      addToCart.mockResolvedValue(1)
       const { wrapper } = mountActions()
+
+      await wrapper.get('form').trigger('submit')
+
+      expect(addToCart).toHaveBeenCalledWith({
+        id: twoStorages.id,
+        colorCode: twoStorages.options.colors[0]!.code,
+        storageCode: 2000,
+      })
+    })
+
+    it('does not send anything when the product has no options to choose', async () => {
+      const { wrapper } = mountActions(noOptions)
 
       await wrapper.get('form').trigger('submit')
 
