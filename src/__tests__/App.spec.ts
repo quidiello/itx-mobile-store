@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import type { Api } from '@/api/client'
 import { routes } from '@/router/routes'
@@ -11,7 +12,7 @@ vi.mock('@/api', () => ({ api: { getProduct: vi.fn<Api['getProduct']>() } }))
 async function mountAt(path: string) {
   const router = createRouter({ history: createMemoryHistory(), routes })
   await router.push(path)
-  const wrapper = mount(App, { global: { plugins: [router] } })
+  const wrapper = mount(App, { global: { plugins: [router, createPinia()] } })
   await flushPromises()
   return wrapper
 }
