@@ -13,7 +13,7 @@ const name = computed(
 </script>
 
 <template>
-  <li aria-current="page">
+  <li aria-current="page" :title="loading ? undefined : name">
     <AppSkeleton v-if="loading" width="8rem" />
     <template v-else>{{ name }}</template>
   </li>
