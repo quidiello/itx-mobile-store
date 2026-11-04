@@ -7,7 +7,7 @@ defineProps<{
 
 <template>
   <span class="skeleton" :style="{ width, height }">
-    <span class="sr-only">Cargando</span>
+    <span class="sr-only">Loading</span>
   </span>
 </template>
 

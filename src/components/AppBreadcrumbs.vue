@@ -12,8 +12,8 @@ const isProductDetail = computed(() => route.name === 'product-detail')
 <template>
   <nav aria-label="Breadcrumb">
     <ol>
-      <li v-if="isProductList" aria-current="page">Inicio</li>
-      <li v-else><RouterLink to="/">Inicio</RouterLink></li>
+      <li v-if="isProductList" aria-current="page">Home</li>
+      <li v-else><RouterLink to="/">Home</RouterLink></li>
       <ProductBreadcrumb v-if="isProductDetail" :id="String(route.params.id)" />
     </ol>
   </nav>

@@ -8,7 +8,7 @@ const props = defineProps<{ id: string }>()
 const { product, loading } = useProduct(() => props.id)
 
 const name = computed(
-  () => [product.value?.brand, product.value?.model].filter(Boolean).join(' ') || 'Producto',
+  () => [product.value?.brand, product.value?.model].filter(Boolean).join(' ') || 'Product',
 )
 </script>
 

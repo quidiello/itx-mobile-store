@@ -37,27 +37,27 @@ export function createApi({ cache, baseUrl }: ApiOptions) {
     try {
       response = await fetch(`${baseUrl}${path}`, { ...init, headers })
     } catch {
-      throw new ApiError('No se pudo conectar con el servidor')
+      throw new ApiError('Could not connect to the server')
     }
     if (!response.ok) {
-      throw new ApiError(`Error ${response.status} al llamar a ${path}`, response.status)
+      throw new ApiError(`Error ${response.status} calling ${path}`, response.status)
     }
     try {
       return await response.json()
     } catch {
-      throw new ApiError(`Respuesta no válida de ${path}`)
+      throw new ApiError(`Invalid response from ${path}`)
     }
   }
 
   function getProducts(): Promise<Product[]> {
     return cache.remember('products', async () => {
       const raw = await request('/api/product')
-      if (!Array.isArray(raw)) throw new ApiError('Respuesta de productos no válida')
+      if (!Array.isArray(raw)) throw new ApiError('Invalid product list response')
 
       return raw.flatMap((item) => {
         const parsed = productSchema.safeParse(item)
         if (parsed.success) return [parsed.data]
-        console.warn('Producto descartado por no cumplir el contrato del API', parsed.error)
+        console.warn('Product discarded because it does not match the API contract', parsed.error)
         return []
       })
     })
@@ -67,7 +67,7 @@ export function createApi({ cache, baseUrl }: ApiOptions) {
     return cache.remember(`product:${id}`, async () => {
       const raw = await request(`/api/product/${encodeURIComponent(id)}`)
       const parsed = productDetailSchema.safeParse(raw)
-      if (!parsed.success) throw new ApiError('Detalle de producto no válido')
+      if (!parsed.success) throw new ApiError('Invalid product detail response')
       return parsed.data
     })
   }
@@ -79,7 +79,7 @@ export function createApi({ cache, baseUrl }: ApiOptions) {
       body: JSON.stringify(payload),
     })
     const parsed = cartResponseSchema.safeParse(raw)
-    if (!parsed.success) throw new ApiError('Respuesta de la cesta no válida')
+    if (!parsed.success) throw new ApiError('Invalid cart response')
     return parsed.data.count
   }
 

@@ -72,7 +72,7 @@ describe('ProductBreadcrumb', () => {
 
     const wrapper = await mountBreadcrumb()
 
-    expect(wrapper.text()).toBe('Producto')
+    expect(wrapper.text()).toBe('Product')
   })
 
   it('falls back to a generic name when the product cannot be loaded', async () => {
@@ -80,6 +80,6 @@ describe('ProductBreadcrumb', () => {
 
     const wrapper = await mountBreadcrumb()
 
-    expect(wrapper.text()).toBe('Producto')
+    expect(wrapper.text()).toBe('Product')
   })
 })

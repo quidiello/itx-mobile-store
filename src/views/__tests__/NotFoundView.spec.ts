@@ -14,14 +14,14 @@ describe('NotFoundView', () => {
   it('tells the user that the page does not exist', async () => {
     const wrapper = await mountView()
 
-    expect(wrapper.text()).toContain('Página no encontrada')
+    expect(wrapper.text()).toContain('Page not found')
   })
 
   it('links back to the product list', async () => {
     const wrapper = await mountView()
 
     const link = wrapper.get('a')
-    expect(link.text()).toBe('Volver al listado')
+    expect(link.text()).toBe('Back to the product list')
     expect(link.attributes('href')).toBe('/')
   })
 })

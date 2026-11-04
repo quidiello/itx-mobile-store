@@ -38,7 +38,7 @@ describe('AppBreadcrumbs', () => {
     it('shows the home as the current page, without a link', async () => {
       const wrapper = await mountAt('/')
 
-      expect(wrapper.text()).toBe('Inicio')
+      expect(wrapper.text()).toBe('Home')
       expect(wrapper.findAll('a')).toHaveLength(0)
       expect(wrapper.get('li').attributes('aria-current')).toBe('page')
     })
@@ -57,7 +57,7 @@ describe('AppBreadcrumbs', () => {
       const items = wrapper.findAll('li')
       expect(items).toHaveLength(2)
       expect(items[0]!.get('a').attributes('href')).toBe('/')
-      expect(items[0]!.text()).toBe('Inicio')
+      expect(items[0]!.text()).toBe('Home')
       expect(items[1]!.text()).toBe('Acer Iconia Talk S')
       expect(items[1]!.attributes('aria-current')).toBe('page')
       expect(wrapper.findAll('a')).toHaveLength(1)
@@ -75,7 +75,7 @@ describe('AppBreadcrumbs', () => {
       const wrapper = await mountAt(`/products/${product.id}`)
 
       expect(wrapper.findComponent(AppSkeleton).exists()).toBe(true)
-      expect(wrapper.get('a').text()).toBe('Inicio')
+      expect(wrapper.get('a').text()).toBe('Home')
     })
   })
 
@@ -84,7 +84,7 @@ describe('AppBreadcrumbs', () => {
       const wrapper = await mountAt('/loquesea')
 
       expect(wrapper.get('a').attributes('href')).toBe('/')
-      expect(wrapper.text()).toBe('Inicio')
+      expect(wrapper.text()).toBe('Home')
       expect(wrapper.find('[aria-current]').exists()).toBe(false)
     })
   })

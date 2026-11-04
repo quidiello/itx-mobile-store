@@ -6,7 +6,7 @@ describe('AppSkeleton', () => {
   it('announces that the content is loading to screen readers', () => {
     const wrapper = mount(AppSkeleton)
 
-    expect(wrapper.text()).toBe('Cargando')
+    expect(wrapper.text()).toBe('Loading')
   })
 
   it('applies the width and the height it receives', () => {

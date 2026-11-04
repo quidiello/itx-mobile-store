@@ -28,6 +28,6 @@ describe('App', () => {
   it('shows the view of the current route', async () => {
     const wrapper = await mountAt('/loquesea')
 
-    expect(wrapper.text()).toContain('Página no encontrada')
+    expect(wrapper.text()).toContain('Page not found')
   })
 })

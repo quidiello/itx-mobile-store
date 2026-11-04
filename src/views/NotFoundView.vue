@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router'
 
 <template>
   <main>
-    <h1>Página no encontrada</h1>
-    <RouterLink to="/">Volver al listado</RouterLink>
+    <h1>Page not found</h1>
+    <RouterLink to="/">Back to the product list</RouterLink>
   </main>
 </template>
