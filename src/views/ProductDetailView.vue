@@ -19,7 +19,24 @@ const name = computed(
 <template>
   <main>
     <PageToolbar>
-      <RouterLink to="/">Back to the product list</RouterLink>
+      <template #leading>
+        <RouterLink to="/" class="back" aria-label="Back to the product list">
+          <svg
+            viewBox="0 0 24 24"
+            width="18"
+            height="18"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M19 12H5" />
+            <path d="m12 19-7-7 7-7" />
+          </svg>
+        </RouterLink>
+      </template>
     </PageToolbar>
 
     <div v-if="loading" class="layout">
@@ -46,6 +63,25 @@ const name = computed(
 </template>
 
 <style scoped>
+.back {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-text);
+  transition: color 0.2s ease;
+}
+
+.back:hover {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
 .layout .skeleton {
   background: var(--color-surface);
 }

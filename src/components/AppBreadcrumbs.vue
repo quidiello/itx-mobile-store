@@ -30,7 +30,8 @@ ol {
   align-items: center;
   gap: var(--space-2);
   margin: 0;
-  padding: var(--space-2) var(--space-4);
+  min-height: 2.25rem;
+  padding: 0 var(--space-4);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);

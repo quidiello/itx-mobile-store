@@ -26,7 +26,7 @@ async function mountAt(path: string) {
   const wrapper = mount(ProductDetailView, {
     global: {
       plugins: [router, createPinia()],
-      stubs: { PageToolbar: { template: '<div><slot /></div>' } },
+      stubs: { PageToolbar: { template: '<div><slot name="leading" /><slot /></div>' } },
     },
   })
   await flushPromises()
@@ -66,7 +66,7 @@ describe('ProductDetailView', () => {
 
       const { wrapper } = await mountAt('/products/abc')
 
-      expect(wrapper.get('a').text()).toBe('Back to the product list')
+      expect(wrapper.get('a').attributes('aria-label')).toBe('Back to the product list')
     })
   })
 
@@ -99,7 +99,7 @@ describe('ProductDetailView', () => {
       const { wrapper } = await mountAt('/products/abc')
 
       const link = wrapper.get('a')
-      expect(link.text()).toBe('Back to the product list')
+      expect(link.attributes('aria-label')).toBe('Back to the product list')
       expect(link.attributes('href')).toBe('/')
     })
   })

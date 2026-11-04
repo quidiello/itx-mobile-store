@@ -4,8 +4,11 @@ import AppBreadcrumbs from './AppBreadcrumbs.vue'
 
 <template>
   <div class="toolbar">
-    <AppBreadcrumbs />
-    <div class="actions"><slot /></div>
+    <div class="trail">
+      <slot name="leading" />
+      <AppBreadcrumbs />
+    </div>
+    <div v-if="$slots.default" class="actions"><slot /></div>
   </div>
 </template>
 
@@ -17,6 +20,13 @@ import AppBreadcrumbs from './AppBreadcrumbs.vue'
   justify-content: space-between;
   gap: var(--space-3) var(--space-4);
   margin-bottom: var(--space-5);
+}
+
+.trail {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-width: 0;
 }
 
 .actions {
