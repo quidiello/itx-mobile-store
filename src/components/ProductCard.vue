@@ -64,15 +64,20 @@ const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl
 }
 
 .image {
-  aspect-ratio: 1;
+  --inset: var(--space-2);
+
+  position: relative;
+  aspect-ratio: 3 / 4;
   margin-bottom: var(--space-3);
-  padding: var(--space-2);
+  padding: var(--inset);
 }
 
 img {
+  position: absolute;
+  inset: var(--inset);
   display: block;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 2 * var(--inset));
+  height: calc(100% - 2 * var(--inset));
   object-fit: contain;
 }
 

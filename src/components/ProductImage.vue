@@ -27,8 +27,11 @@ const imageUrl = computed(() => (failed.value ? null : props.src))
 
 <style scoped>
 .image {
+  --inset: var(--space-5);
+
+  position: relative;
   aspect-ratio: 1;
-  padding: var(--space-5);
+  padding: var(--inset);
   border-radius: var(--radius-2xl);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
@@ -43,8 +46,9 @@ img {
 
 @media (max-width: 40rem) {
   .image {
+    --inset: var(--space-3);
+
     aspect-ratio: 16 / 10;
-    padding: var(--space-3);
   }
 }
 </style>
