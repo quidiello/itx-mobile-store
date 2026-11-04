@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
-import AppSkeleton from '@/components/AppSkeleton.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
 import ProductActions from '@/components/ProductActions.vue'
+import ProductDetailSkeleton from '@/components/ProductDetailSkeleton.vue'
 import ProductDescription from '@/components/ProductDescription.vue'
 import ProductImage from '@/components/ProductImage.vue'
 import { useProduct } from '@/composables/useProduct'
@@ -54,12 +54,9 @@ const name = computed(
       </template>
     </PageToolbar>
 
-    <div v-if="loading" class="layout">
-      <AppSkeleton height="20rem" />
-      <div class="details">
-        <AppSkeleton height="12rem" />
-        <AppSkeleton height="9rem" />
-      </div>
+    <div v-if="loading" aria-busy="true">
+      <p class="sr-only" role="status">Loading product</p>
+      <ProductDetailSkeleton aria-hidden="true" />
     </div>
     <div v-else-if="error || !product" role="alert">
       <p>Product could not be loaded</p>
@@ -99,11 +96,6 @@ const name = computed(
 .back:hover {
   color: var(--color-accent);
   text-decoration: none;
-}
-
-.layout .skeleton {
-  border-radius: var(--radius-2xl);
-  background: var(--color-surface);
 }
 
 .layout {

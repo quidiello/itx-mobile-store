@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import AppSkeleton from '@/components/AppSkeleton.vue'
 import BackToTop from '@/components/BackToTop.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
 import ProductCard from '@/components/ProductCard.vue'
+import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import { useProducts } from '@/composables/useProducts'
 import { filterProducts } from '@/utils/filterProducts'
@@ -29,8 +29,9 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
       <SearchBar v-model="query" />
     </PageToolbar>
 
-    <div v-if="loading" class="grid">
-      <AppSkeleton v-for="n in 8" :key="n" height="16rem" />
+    <div v-if="loading" class="grid" aria-busy="true">
+      <p class="sr-only" role="status">Loading products</p>
+      <ProductCardSkeleton v-for="n in 8" :key="n" :index="n" aria-hidden="true" />
     </div>
     <div v-else-if="error" role="alert">
       <p>Products could not be loaded</p>
@@ -49,11 +50,6 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
 </template>
 
 <style scoped>
-.grid .skeleton {
-  border-radius: var(--radius-2xl);
-  background: var(--color-surface);
-}
-
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(max(12rem, calc((100% - 4.5rem) / 4)), 1fr));

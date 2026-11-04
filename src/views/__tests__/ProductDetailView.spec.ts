@@ -6,7 +6,7 @@ import { api } from '@/api'
 import type { Api } from '@/api/client'
 import { productDetailSchema } from '@/api/schemas'
 import details from '@/api/__tests__/fixtures/product-details.json'
-import AppSkeleton from '@/components/AppSkeleton.vue'
+import ProductDetailSkeleton from '@/components/ProductDetailSkeleton.vue'
 import ProductActions from '@/components/ProductActions.vue'
 import ProductDescription from '@/components/ProductDescription.vue'
 import ProductImage from '@/components/ProductImage.vue'
@@ -56,7 +56,7 @@ describe('ProductDetailView', () => {
 
       const { wrapper } = await mountAt('/products/abc')
 
-      expect(wrapper.findAllComponents(AppSkeleton).length).toBeGreaterThan(0)
+      expect(wrapper.findComponent(ProductDetailSkeleton).exists()).toBe(true)
       expect(wrapper.findComponent(ProductDescription).exists()).toBe(false)
       expect(wrapper.findComponent(ProductActions).exists()).toBe(false)
     })
@@ -77,7 +77,7 @@ describe('ProductDetailView', () => {
       expect(wrapper.findComponent(ProductImage).exists()).toBe(true)
       expect(wrapper.findComponent(ProductDescription).exists()).toBe(true)
       expect(wrapper.findComponent(ProductActions).exists()).toBe(true)
-      expect(wrapper.findAllComponents(AppSkeleton)).toHaveLength(0)
+      expect(wrapper.findComponent(ProductDetailSkeleton).exists()).toBe(false)
     })
 
     it('titles the page with the name of the product', async () => {

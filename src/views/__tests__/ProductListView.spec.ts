@@ -4,7 +4,7 @@ import { createMemoryHistory, createRouter } from 'vue-router'
 import { api } from '@/api'
 import type { Api } from '@/api/client'
 import type { Product } from '@/api/schemas'
-import AppSkeleton from '@/components/AppSkeleton.vue'
+import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import { routes } from '@/router/routes'
@@ -47,7 +47,7 @@ describe('ProductListView', () => {
 
       const { wrapper } = await mountAt('/')
 
-      expect(wrapper.findAllComponents(AppSkeleton)).toHaveLength(8)
+      expect(wrapper.findAllComponents(ProductCardSkeleton)).toHaveLength(8)
       expect(cards(wrapper)).toHaveLength(0)
     })
 
@@ -63,7 +63,7 @@ describe('ProductListView', () => {
       const { wrapper } = await mountAt('/')
 
       expect(cards(wrapper)).toHaveLength(3)
-      expect(wrapper.findAllComponents(AppSkeleton)).toHaveLength(0)
+      expect(wrapper.findAllComponents(ProductCardSkeleton)).toHaveLength(0)
     })
 
     it('shows an error with a retry button when the products cannot be loaded', async () => {
