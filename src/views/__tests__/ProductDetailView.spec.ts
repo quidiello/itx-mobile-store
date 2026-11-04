@@ -102,6 +102,29 @@ describe('ProductDetailView', () => {
       expect(link.attributes('aria-label')).toBe('Back to the product list')
       expect(link.attributes('href')).toBe('/')
     })
+
+    it('goes back in the history when the user comes from another page', async () => {
+      const { wrapper, router } = await mountAt('/products/abc')
+      router.options.history.state.back = '/?q=acer'
+      const back = vi.spyOn(router, 'back').mockImplementation(() => {})
+      const push = vi.spyOn(router, 'push')
+
+      await wrapper.get('a').trigger('click')
+
+      expect(back).toHaveBeenCalledOnce()
+      expect(push).not.toHaveBeenCalled()
+    })
+
+    it('goes to the product list when there is no previous page', async () => {
+      const { wrapper, router } = await mountAt('/products/abc')
+      const back = vi.spyOn(router, 'back')
+      const push = vi.spyOn(router, 'push')
+
+      await wrapper.get('a').trigger('click')
+
+      expect(push).toHaveBeenCalledWith('/')
+      expect(back).not.toHaveBeenCalled()
+    })
   })
 
   describe('when the product cannot be loaded', () => {

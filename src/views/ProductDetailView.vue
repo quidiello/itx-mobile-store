@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { RouterLink, useRoute } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 import AppSkeleton from '@/components/AppSkeleton.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
 import ProductActions from '@/components/ProductActions.vue'
@@ -9,7 +9,15 @@ import ProductImage from '@/components/ProductImage.vue'
 import { useProduct } from '@/composables/useProduct'
 
 const route = useRoute()
+const router = useRouter()
 const { product, loading, error, reload } = useProduct(() => String(route.params.id))
+
+// Going back through the history restores the scroll and the search of the list;
+// a direct visit has no previous page, so it falls back to the list itself.
+function goBack() {
+  if (router.options.history.state.back) router.back()
+  else router.push('/')
+}
 
 const name = computed(
   () => [product.value?.brand, product.value?.model].filter(Boolean).join(' ') || 'Product',
@@ -20,21 +28,28 @@ const name = computed(
   <main>
     <PageToolbar>
       <template #leading>
-        <RouterLink to="/" class="back" aria-label="Back to the product list">
-          <svg
-            viewBox="0 0 24 24"
-            width="18"
-            height="18"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
+        <RouterLink v-slot="{ href }" to="/" custom>
+          <a
+            :href="href"
+            class="back"
+            aria-label="Back to the product list"
+            @click.prevent="goBack"
           >
-            <path d="M19 12H5" />
-            <path d="m12 19-7-7 7-7" />
-          </svg>
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 12H5" />
+              <path d="m12 19-7-7 7-7" />
+            </svg>
+          </a>
         </RouterLink>
       </template>
     </PageToolbar>
