@@ -54,8 +54,10 @@ const hiddenCount = computed(() => rows.value.filter((row) => !row.main).length)
 
 <template>
   <div class="description">
-    <h1>{{ name }}</h1>
-    <p class="price" :class="{ unavailable }">{{ formatPrice(product.price) }}</p>
+    <div class="head">
+      <h1>{{ name }}</h1>
+      <p class="price" :class="{ unavailable }">{{ formatPrice(product.price) }}</p>
+    </div>
     <dl :id="listId">
       <div v-for="row in rows" :key="row.label" class="row" :hidden="!row.main && !expanded">
         <dt>
@@ -92,7 +94,16 @@ const hiddenCount = computed(() => rows.value.filter((row) => !row.main).length)
 </template>
 
 <style scoped>
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
 h1 {
+  min-width: 0;
   margin: 0;
   font-size: var(--text-xl);
   font-weight: 600;
@@ -100,10 +111,12 @@ h1 {
 }
 
 .price {
-  margin: var(--space-1) 0 var(--space-4);
+  flex: none;
+  margin: 0;
   font-size: var(--text-2xl);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .price.unavailable {
@@ -179,5 +192,19 @@ dd {
 
 .toggle svg.open {
   transform: rotate(180deg);
+}
+
+@media (max-width: 40rem) {
+  .head {
+    margin-bottom: var(--space-3);
+  }
+
+  h1 {
+    font-size: var(--text-lg);
+  }
+
+  .price {
+    display: none;
+  }
 }
 </style>

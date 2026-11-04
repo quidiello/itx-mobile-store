@@ -40,4 +40,11 @@ img {
   height: 100%;
   object-fit: contain;
 }
+
+@media (max-width: 40rem) {
+  .image {
+    aspect-ratio: 16 / 10;
+    padding: var(--space-3);
+  }
+}
 </style>
