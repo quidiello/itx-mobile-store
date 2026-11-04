@@ -67,7 +67,7 @@ const name = computed(
     </div>
     <template v-else>
       <div class="layout">
-        <ProductImage :src="product.imgUrl" :alt="name" />
+        <ProductImage class="sticky" :src="product.imgUrl" :alt="name" />
         <div class="details">
           <section class="card">
             <ProductDescription :product="product" />
@@ -124,6 +124,13 @@ const name = computed(
   border-radius: var(--radius-2xl);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 40rem) {
+  .sticky {
+    position: sticky;
+    top: var(--space-5);
+  }
 }
 
 @media (max-width: 40rem) {

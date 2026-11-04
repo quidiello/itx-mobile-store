@@ -141,6 +141,7 @@ fieldset input {
 
 button {
   width: 100%;
+  margin-top: var(--space-3);
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-pill);
 }
@@ -150,5 +151,9 @@ button {
   color: var(--color-success);
   font-size: var(--text-sm);
   font-weight: 500;
+}
+
+[role='status']:empty {
+  margin: 0;
 }
 </style>
