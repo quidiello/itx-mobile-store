@@ -1,14 +1,7 @@
 import { config } from '@/config'
 import { createCache } from '@/services/cache'
+import { getStorage } from '@/services/storage'
 import { createApi } from './client'
-
-function getStorage() {
-  try {
-    return window.localStorage
-  } catch {
-    return null
-  }
-}
 
 export const api = createApi({
   cache: createCache({
