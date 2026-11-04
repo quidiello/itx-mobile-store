@@ -266,4 +266,35 @@ describe('ProductActions', () => {
       expect(wrapper.find('[role="status"]').text()).toBe('')
     })
   })
+
+  describe('summary of the purchase', () => {
+    const summaryOf = (wrapper: Wrapper) => wrapper.get('.summary')
+
+    it('shows the price and the selected options', () => {
+      const { wrapper } = mountActions()
+
+      expect(summaryOf(wrapper).get('strong').text()).toBe('€170')
+      expect(summaryOf(wrapper).get('span').text()).toBe('16 GB · Black')
+    })
+
+    it('shows the new options when the user changes the selection', async () => {
+      const { wrapper } = mountActions()
+
+      await radio(wrapper, 'Storage', '32 GB').setValue(true)
+
+      expect(summaryOf(wrapper).text()).toContain('32 GB · Black')
+    })
+
+    it('is hidden from assistive technology because the page already says it', () => {
+      const { wrapper } = mountActions()
+
+      expect(summaryOf(wrapper).attributes('aria-hidden')).toBe('true')
+    })
+
+    it('tells that the price is not available when there is none', () => {
+      const { wrapper } = mountActions(withoutPrice)
+
+      expect(summaryOf(wrapper).text()).toContain('Not available')
+    })
+  })
 })

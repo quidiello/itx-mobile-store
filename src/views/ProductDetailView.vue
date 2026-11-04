@@ -134,6 +134,10 @@ const name = computed(
 }
 
 @media (max-width: 40rem) {
+  main {
+    padding-bottom: 7rem;
+  }
+
   .layout {
     grid-template-columns: 1fr;
   }

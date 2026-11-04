@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import type { ProductDetail, ProductOption } from '@/api/schemas'
 import { useCartStore } from '@/stores/cart'
+import { formatPrice } from '@/utils/formatPrice'
 
 const props = defineProps<{ product: ProductDetail }>()
 
@@ -14,6 +15,14 @@ const result = ref<'added' | 'failed' | null>(null)
 
 const hasOptions = computed(
   () => props.product.options.storages.length > 0 && props.product.options.colors.length > 0,
+)
+const summary = computed(() =>
+  [
+    props.product.options.storages.find((option) => option.code === storageCode.value)?.name,
+    props.product.options.colors.find((option) => option.code === colorCode.value)?.name,
+  ]
+    .filter(Boolean)
+    .join(' · '),
 )
 const hasPrice = computed(() => props.product.price !== null)
 const canAdd = computed(
@@ -77,12 +86,19 @@ async function add() {
 
     <p v-if="!hasOptions">No options available</p>
 
-    <button type="submit" :disabled="!canAdd || adding">
-      {{ adding ? 'Adding…' : hasPrice ? 'Add to cart' : 'Not available' }}
-    </button>
-
-    <p role="status">{{ result === 'added' ? 'Added to cart' : '' }}</p>
-    <p v-if="result === 'failed'" role="alert">Could not add the product. Please try again.</p>
+    <div class="buy">
+      <div class="messages">
+        <p role="status">{{ result === 'added' ? 'Added to cart' : '' }}</p>
+        <p v-if="result === 'failed'" role="alert">Could not add the product. Please try again.</p>
+      </div>
+      <div class="summary" aria-hidden="true">
+        <strong>{{ formatPrice(product.price) }}</strong>
+        <span>{{ summary }}</span>
+      </div>
+      <button type="submit" :disabled="!canAdd || adding">
+        {{ adding ? 'Adding…' : hasPrice ? 'Add to cart' : 'Not available' }}
+      </button>
+    </div>
   </form>
 </template>
 
@@ -139,6 +155,10 @@ fieldset input {
   cursor: pointer;
 }
 
+.summary {
+  display: none;
+}
+
 button {
   width: 100%;
   margin-top: var(--space-3);
@@ -155,5 +175,67 @@ button {
 
 [role='status']:empty {
   margin: 0;
+}
+
+@media (max-width: 40rem) {
+  .buy {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-3) var(--space-4) max(var(--space-3), env(safe-area-inset-bottom));
+    border-top: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
+  .summary {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    font-size: var(--text-xs);
+  }
+
+  .summary strong {
+    font-size: var(--text-lg);
+    line-height: 1.2;
+  }
+
+  .summary span {
+    overflow: hidden;
+    color: var(--color-text-muted);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  button {
+    flex: 1;
+    width: auto;
+    margin-top: 0;
+  }
+
+  .messages {
+    position: absolute;
+    right: var(--space-4);
+    bottom: 100%;
+    left: var(--space-4);
+    margin-bottom: var(--space-2);
+  }
+
+  [role='status'] {
+    margin: 0;
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+  }
+
+  [role='status']:empty {
+    display: none;
+  }
 }
 </style>
