@@ -29,8 +29,7 @@ const imageUrl = computed(() => (failed.value ? null : props.src))
 .image {
   aspect-ratio: 1;
   padding: var(--space-5);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-2xl);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }

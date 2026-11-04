@@ -107,7 +107,7 @@ fieldset label {
   position: relative;
   padding: var(--space-2) var(--space-4);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
   cursor: pointer;
   transition:
@@ -141,6 +141,8 @@ fieldset input {
 
 button {
   width: 100%;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-pill);
 }
 
 [role='status'] {

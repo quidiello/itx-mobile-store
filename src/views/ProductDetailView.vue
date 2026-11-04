@@ -57,7 +57,8 @@ const name = computed(
     <div v-if="loading" class="layout">
       <AppSkeleton height="20rem" />
       <div class="details">
-        <AppSkeleton v-for="n in 6" :key="n" />
+        <AppSkeleton height="12rem" />
+        <AppSkeleton height="9rem" />
       </div>
     </div>
     <div v-else-if="error || !product" role="alert">
@@ -65,12 +66,15 @@ const name = computed(
       <button type="button" @click="reload">Retry</button>
     </div>
     <template v-else>
-      <h1>{{ name }}</h1>
       <div class="layout">
         <ProductImage :src="product.imgUrl" :alt="name" />
         <div class="details">
-          <ProductDescription :product="product" />
-          <ProductActions :product="product" />
+          <section class="card">
+            <ProductDescription :product="product" />
+          </section>
+          <section class="card">
+            <ProductActions :product="product" />
+          </section>
         </div>
       </div>
     </template>
@@ -98,6 +102,7 @@ const name = computed(
 }
 
 .layout .skeleton {
+  border-radius: var(--radius-2xl);
   background: var(--color-surface);
 }
 
@@ -111,10 +116,12 @@ const name = computed(
 .details {
   display: flex;
   flex-direction: column;
-  gap: var(--space-5);
+  gap: var(--space-4);
+}
+
+.card {
   padding: var(--space-5);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-2xl);
   background: var(--color-surface);
   box-shadow: var(--shadow-sm);
 }
