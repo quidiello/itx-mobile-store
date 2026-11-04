@@ -1,21 +1,15 @@
-export const DEFAULT_TTL_MS = 60 * 60 * 1000
-
 interface Entry<T> {
   value: T
   expiresAt: number
 }
 
 export interface CacheOptions {
-  ttlMs?: number
+  ttlMs: number
+  prefix: string
   storage?: Pick<Storage, 'getItem' | 'setItem' | 'removeItem'> | null
-  prefix?: string
 }
 
-export function createCache({
-  ttlMs = DEFAULT_TTL_MS,
-  storage = null,
-  prefix = 'itx-store:',
-}: CacheOptions = {}) {
+export function createCache({ ttlMs, prefix, storage = null }: CacheOptions) {
   const memory = new Map<string, Entry<unknown>>()
   const inFlight = new Map<string, Promise<unknown>>()
 

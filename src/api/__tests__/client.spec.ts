@@ -20,7 +20,10 @@ function requestAt(index = 0) {
 }
 
 function createTestApi() {
-  return createApi({ cache: createCache(), baseUrl: BASE_URL })
+  return createApi({
+    cache: createCache({ ttlMs: 60 * 60 * 1000, prefix: 'test:' }),
+    baseUrl: BASE_URL,
+  })
 }
 
 beforeEach(() => {

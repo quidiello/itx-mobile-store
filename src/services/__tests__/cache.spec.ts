@@ -1,8 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { createCache } from '../cache'
+import { createCache, type CacheOptions } from '../cache'
 
 const MINUTE = 60 * 1000
 const HOUR = 60 * MINUTE
+
+function createTestCache(options: Partial<CacheOptions> = {}) {
+  return createCache({ ttlMs: HOUR, prefix: 'test:', ...options })
+}
 
 function createMemoryStorage(initial: Record<string, string> = {}) {
   const items = new Map(Object.entries(initial))
@@ -36,11 +40,11 @@ afterEach(() => {
 
 describe('get and set', () => {
   it('returns undefined for a key that was never stored', () => {
-    expect(createCache().get('products')).toBeUndefined()
+    expect(createTestCache().get('products')).toBeUndefined()
   })
 
   it('returns the stored value while the ttl has not elapsed', () => {
-    const cache = createCache({ ttlMs: HOUR })
+    const cache = createTestCache({ ttlMs: HOUR })
 
     cache.set('products', ['a'])
     vi.advanceTimersByTime(HOUR - 1)
@@ -49,7 +53,7 @@ describe('get and set', () => {
   })
 
   it('drops the entry as soon as the ttl has elapsed', () => {
-    const cache = createCache({ ttlMs: HOUR })
+    const cache = createTestCache({ ttlMs: HOUR })
 
     cache.set('products', ['a'])
     vi.advanceTimersByTime(HOUR)
@@ -57,19 +61,8 @@ describe('get and set', () => {
     expect(cache.get('products')).toBeUndefined()
   })
 
-  it('uses a ttl of one hour by default', () => {
-    const cache = createCache()
-
-    cache.set('products', ['a'])
-    vi.advanceTimersByTime(HOUR - 1)
-    expect(cache.get('products')).toEqual(['a'])
-
-    vi.advanceTimersByTime(1)
-    expect(cache.get('products')).toBeUndefined()
-  })
-
   it('expires each entry independently', () => {
-    const cache = createCache({ ttlMs: HOUR })
+    const cache = createTestCache({ ttlMs: HOUR })
 
     cache.set('first', 1)
     vi.advanceTimersByTime(30 * MINUTE)
@@ -81,7 +74,7 @@ describe('get and set', () => {
   })
 
   it('restarts the expiry when a key is stored again', () => {
-    const cache = createCache({ ttlMs: HOUR })
+    const cache = createTestCache({ ttlMs: HOUR })
 
     cache.set('products', ['old'])
     vi.advanceTimersByTime(40 * MINUTE)
@@ -92,7 +85,7 @@ describe('get and set', () => {
   })
 
   it('removes an entry on demand', () => {
-    const cache = createCache()
+    const cache = createTestCache()
 
     cache.set('products', ['a'])
     cache.remove('products')
@@ -105,15 +98,15 @@ describe('persistence', () => {
   it('lets a new cache read what a previous one stored in the same storage', () => {
     const storage = createMemoryStorage()
 
-    createCache({ storage }).set('products', ['a'])
+    createTestCache({ storage }).set('products', ['a'])
 
-    expect(createCache({ storage }).get('products')).toEqual(['a'])
+    expect(createTestCache({ storage }).get('products')).toEqual(['a'])
   })
 
   it('stores entries under the configured prefix', () => {
     const storage = createMemoryStorage()
 
-    createCache({ storage, prefix: 'shop:v2:' }).set('products', ['a'])
+    createTestCache({ storage, prefix: 'shop:v2:' }).set('products', ['a'])
 
     expect(storage.items.has('shop:v2:products')).toBe(true)
   })
@@ -121,24 +114,24 @@ describe('persistence', () => {
   it('does not read entries stored under a different prefix', () => {
     const storage = createMemoryStorage()
 
-    createCache({ storage, prefix: 'shop:v1:' }).set('products', ['a'])
+    createTestCache({ storage, prefix: 'shop:v1:' }).set('products', ['a'])
 
-    expect(createCache({ storage, prefix: 'shop:v2:' }).get('products')).toBeUndefined()
+    expect(createTestCache({ storage, prefix: 'shop:v2:' }).get('products')).toBeUndefined()
   })
 
   it('removes an expired entry from the storage when it is read', () => {
     const storage = createMemoryStorage()
-    createCache({ storage, ttlMs: HOUR }).set('products', ['a'])
+    createTestCache({ storage, ttlMs: HOUR }).set('products', ['a'])
 
     vi.advanceTimersByTime(HOUR)
 
-    expect(createCache({ storage, ttlMs: HOUR }).get('products')).toBeUndefined()
+    expect(createTestCache({ storage, ttlMs: HOUR }).get('products')).toBeUndefined()
     expect(storage.items.size).toBe(0)
   })
 
   it('removes the entry from the storage on demand', () => {
     const storage = createMemoryStorage()
-    const cache = createCache({ storage })
+    const cache = createTestCache({ storage })
 
     cache.set('products', ['a'])
     cache.remove('products')
@@ -149,7 +142,7 @@ describe('persistence', () => {
 
 describe('storage failures', () => {
   it('keeps serving values from memory when the storage throws', () => {
-    const cache = createCache({ storage: createBrokenStorage() })
+    const cache = createTestCache({ storage: createBrokenStorage() })
 
     cache.set('products', ['a'])
 
@@ -157,7 +150,7 @@ describe('storage failures', () => {
   })
 
   it('does not fail when removing an entry from a storage that throws', () => {
-    const cache = createCache({ storage: createBrokenStorage() })
+    const cache = createTestCache({ storage: createBrokenStorage() })
 
     cache.set('products', ['a'])
 
@@ -166,24 +159,24 @@ describe('storage failures', () => {
   })
 
   it('ignores a stored value that is not valid JSON', () => {
-    const storage = createMemoryStorage({ 'itx-store:products': '{not json' })
+    const storage = createMemoryStorage({ 'test:products': '{not json' })
 
-    expect(createCache({ storage }).get('products')).toBeUndefined()
+    expect(createTestCache({ storage }).get('products')).toBeUndefined()
   })
 
   it.each(['{"value":["a"]}', '{"value":["a"],"expiresAt":"tomorrow"}', 'null', '42'])(
     'ignores a stored value without a numeric expiresAt: %s',
     (raw) => {
-      const storage = createMemoryStorage({ 'itx-store:products': raw })
+      const storage = createMemoryStorage({ 'test:products': raw })
 
-      expect(createCache({ storage }).get('products')).toBeUndefined()
+      expect(createTestCache({ storage }).get('products')).toBeUndefined()
     },
   )
 })
 
 describe('remember', () => {
   it('calls the loader once and serves later calls from the cache', async () => {
-    const cache = createCache()
+    const cache = createTestCache()
     const loader = vi.fn<() => Promise<string[]>>().mockResolvedValue(['a'])
 
     const first = await cache.remember('products', loader)
@@ -195,7 +188,7 @@ describe('remember', () => {
   })
 
   it('stores the loaded value so that get can read it', async () => {
-    const cache = createCache()
+    const cache = createTestCache()
 
     await cache.remember('products', () => Promise.resolve(['a']))
 
@@ -203,7 +196,7 @@ describe('remember', () => {
   })
 
   it('shares a single request between simultaneous calls', async () => {
-    const cache = createCache()
+    const cache = createTestCache()
     const loader = vi.fn<() => Promise<string[]>>().mockResolvedValue(['a'])
 
     const results = await Promise.all([
@@ -216,7 +209,7 @@ describe('remember', () => {
   })
 
   it('does not cache a failed load and retries on the next call', async () => {
-    const cache = createCache()
+    const cache = createTestCache()
     const loader = vi
       .fn<() => Promise<string[]>>()
       .mockRejectedValueOnce(new Error('network down'))
@@ -229,7 +222,7 @@ describe('remember', () => {
   })
 
   it('rejects every simultaneous caller when the shared load fails', async () => {
-    const cache = createCache()
+    const cache = createTestCache()
     const loader = vi.fn<() => Promise<string[]>>().mockRejectedValue(new Error('network down'))
 
     const results = await Promise.allSettled([
@@ -242,7 +235,7 @@ describe('remember', () => {
   })
 
   it('loads again once the cached value has expired', async () => {
-    const cache = createCache({ ttlMs: HOUR })
+    const cache = createTestCache({ ttlMs: HOUR })
     const loader = vi
       .fn<() => Promise<string[]>>()
       .mockResolvedValueOnce(['old'])
@@ -257,7 +250,7 @@ describe('remember', () => {
   })
 
   it('keeps a separate entry for each key', async () => {
-    const cache = createCache()
+    const cache = createTestCache()
     const loadFirst = vi.fn<() => Promise<string>>().mockResolvedValue('first')
     const loadSecond = vi.fn<() => Promise<string>>().mockResolvedValue('second')
 
