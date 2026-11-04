@@ -1,6 +1,8 @@
 const APP_NAME = 'itx-store'
 const CACHE_VERSION = 'v1'
 const CACHE_TTL_MS = 60 * 60 * 1000
+const LOCALE = 'en'
+const CURRENCY = 'EUR'
 
 interface Env {
   VITE_API_BASE_URL?: string
@@ -26,6 +28,8 @@ export function createConfig(env: Env) {
     apiBaseUrl: parseBaseUrl(env.VITE_API_BASE_URL),
     cacheTtlMs: CACHE_TTL_MS,
     cachePrefix: `${APP_NAME}:${CACHE_VERSION}:`,
+    locale: LOCALE,
+    currency: CURRENCY,
   }
 }
 

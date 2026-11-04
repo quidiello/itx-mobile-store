@@ -59,4 +59,14 @@ describe('createConfig', () => {
       expect(createConfig(validEnv).cachePrefix).toMatch(/^itx-store:v\d+:$/)
     })
   })
+
+  describe('formatting', () => {
+    it('uses english to format the numbers', () => {
+      expect(createConfig(validEnv).locale).toBe('en')
+    })
+
+    it('uses euros as the currency', () => {
+      expect(createConfig(validEnv).currency).toBe('EUR')
+    })
+  })
 })
