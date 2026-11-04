@@ -47,7 +47,7 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
 
 <style scoped>
 .grid .skeleton {
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   background: var(--color-surface);
 }
 

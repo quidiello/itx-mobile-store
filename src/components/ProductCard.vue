@@ -24,10 +24,12 @@ const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl
       <img v-if="imageUrl" :src="imageUrl" alt="" loading="lazy" @error="imageFailed = true" />
       <ProductImagePlaceholder v-else />
     </div>
-    <span v-if="product.brand" class="brand">{{ product.brand }}</span>
     <div class="row">
-      <span v-if="product.model" class="model">{{ product.model }}</span>
-      <span v-if="!product.brand && !product.model" class="model">Unnamed product</span>
+      <div class="info">
+        <span v-if="product.brand" class="brand">{{ product.brand }}</span>
+        <span v-if="product.model" class="model">{{ product.model }}</span>
+        <span v-if="!product.brand && !product.model" class="model">Unnamed product</span>
+      </div>
       <span class="price" :class="{ unavailable: product.price === null }">{{
         formatPrice(product.price)
       }}</span>
@@ -42,8 +44,9 @@ const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl
   gap: var(--space-1);
   height: 100%;
   padding: var(--space-4);
-  border-radius: var(--radius-xl);
+  border-radius: var(--radius-2xl);
   background: var(--color-surface);
+  box-shadow: var(--shadow-sm);
   color: var(--color-text);
   text-decoration: none;
   transition:
@@ -83,15 +86,21 @@ img {
 
 .row {
   display: flex;
-  align-items: baseline;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-4);
   margin-top: auto;
 }
 
-.model {
+.info {
+  display: flex;
+  flex-direction: column;
   min-width: 0;
+}
+
+.model {
   font-weight: 500;
+  text-wrap: balance;
 }
 
 .price {
