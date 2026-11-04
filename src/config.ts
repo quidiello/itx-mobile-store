@@ -1,6 +1,7 @@
 const APP_NAME = 'itx-store'
 const CACHE_VERSION = 'v1'
 const CACHE_TTL_MS = 60 * 60 * 1000
+const CART_STORAGE_KEY = `${APP_NAME}:cart-count`
 const LOCALE = 'en'
 const CURRENCY = 'EUR'
 
@@ -28,6 +29,7 @@ export function createConfig(env: Env) {
     apiBaseUrl: parseBaseUrl(env.VITE_API_BASE_URL),
     cacheTtlMs: CACHE_TTL_MS,
     cachePrefix: `${APP_NAME}:${CACHE_VERSION}:`,
+    cartStorageKey: CART_STORAGE_KEY,
     locale: LOCALE,
     currency: CURRENCY,
   }

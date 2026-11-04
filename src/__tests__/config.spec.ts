@@ -60,6 +60,12 @@ describe('createConfig', () => {
     })
   })
 
+  describe('cart', () => {
+    it('keeps the cart count under a key that does not depend on the cache version', () => {
+      expect(createConfig(validEnv).cartStorageKey).toBe('itx-store:cart-count')
+    })
+  })
+
   describe('formatting', () => {
     it('uses english to format the numbers', () => {
       expect(createConfig(validEnv).locale).toBe('en')
