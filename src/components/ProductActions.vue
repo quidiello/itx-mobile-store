@@ -54,6 +54,10 @@ watch([storageCode, colorCode, () => props.product], () => {
   result.value = null
 })
 
+watch(narrow, (isNarrow) => {
+  if (!isNarrow) sheetOpen.value = false
+})
+
 watch(sheetOpen, (open) => {
   document.body.style.overflow = open ? 'hidden' : ''
 })
@@ -92,7 +96,8 @@ function trapFocus(event: KeyboardEvent) {
 }
 
 async function add() {
-  if (storageCode.value === null || colorCode.value === null || adding.value) return
+  if (!hasPrice.value || storageCode.value === null || colorCode.value === null) return
+  if (adding.value) return
 
   adding.value = true
   result.value = null

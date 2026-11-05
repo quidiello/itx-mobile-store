@@ -77,6 +77,32 @@ describe('getProducts', () => {
     expect(warn).toHaveBeenCalledTimes(1)
   })
 
+  it('throws an ApiError when none of the products matches the contract', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    respondWith([{ brand: 'Missing id' }, { model: 'Also missing' }])
+
+    await expect(createTestApi().getProducts()).rejects.toBeInstanceOf(ApiError)
+  })
+
+  it('does not cache a list in which nothing matched the contract', async () => {
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    const api = createTestApi()
+    respondWith([{ brand: 'Missing id' }])
+    await expect(api.getProducts()).rejects.toBeInstanceOf(ApiError)
+
+    respondWith(list)
+    const products = await api.getProducts()
+
+    expect(products.length).toBeGreaterThan(0)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+
+  it('still accepts an empty list when the server really has no products', async () => {
+    respondWith([])
+
+    await expect(createTestApi().getProducts()).resolves.toEqual([])
+  })
+
   it('throws an ApiError when the response is not a list', async () => {
     respondWith({ products: [] })
 

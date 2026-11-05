@@ -389,6 +389,37 @@ describe('ProductActions', () => {
       }))
     }
 
+    it('closes the sheet and frees the scroll when the screen stops being narrow', async () => {
+      let listener: () => void = () => {}
+      const list = {
+        matches: true,
+        addEventListener: (_event: string, callback: () => void) => {
+          listener = callback
+        },
+        removeEventListener: () => {},
+      }
+      vi.stubGlobal('matchMedia', () => list)
+      const { wrapper } = mountActions()
+      await wrapper.vm.$nextTick()
+      await wrapper.get('.summary').trigger('click')
+      expect(document.body.style.overflow).toBe('hidden')
+
+      list.matches = false
+      listener()
+      await wrapper.vm.$nextTick()
+
+      expect(optionsOf(wrapper).classes()).not.toContain('open')
+      expect(document.body.style.overflow).toBe('')
+    })
+
+    it('does not add a product without price even if the form is submitted', async () => {
+      const { wrapper } = mountActions(withoutPrice)
+
+      await wrapper.get('form').trigger('submit')
+
+      expect(addToCart).not.toHaveBeenCalled()
+    })
+
     it('announces what the summary button does', () => {
       const { wrapper } = mountActions()
 

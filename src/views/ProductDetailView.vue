@@ -26,7 +26,10 @@ const name = computed(
   () => [product.value?.brand, product.value?.model].filter(Boolean).join(' ') || 'Product',
 )
 
-usePageTitle(() => (product.value ? name.value : undefined))
+usePageTitle(() => {
+  if (loading.value) return undefined
+  return product.value ? name.value : "Couldn't load the product"
+})
 </script>
 
 <template>

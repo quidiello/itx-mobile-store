@@ -172,6 +172,14 @@ describe('ProductDetailView', () => {
   })
 
   describe('page', () => {
+    it('titles the document as a failure when the product cannot be loaded', async () => {
+      getProduct.mockRejectedValue(new Error('network down'))
+
+      await mountAt('/products/abc')
+
+      expect(document.title).toBe("Couldn't load the product · Mobile Store")
+    })
+
     it('titles the document with the name of the product once it is loaded', async () => {
       await mountAt('/products/abc')
 

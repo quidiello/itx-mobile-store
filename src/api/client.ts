@@ -54,12 +54,17 @@ export function createApi({ cache, baseUrl }: ApiOptions) {
       const raw = await request('/api/product')
       if (!Array.isArray(raw)) throw new ApiError('Invalid product list response')
 
-      return raw.flatMap((item) => {
+      const products = raw.flatMap((item) => {
         const parsed = productSchema.safeParse(item)
         if (parsed.success) return [parsed.data]
         console.warn('Product discarded because it does not match the API contract', parsed.error)
         return []
       })
+      // A broken contract must not stay cached as an empty list for an hour.
+      if (raw.length > 0 && products.length === 0) {
+        throw new ApiError('Invalid product list response')
+      }
+      return products
     })
   }
 
