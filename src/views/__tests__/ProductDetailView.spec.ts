@@ -133,8 +133,8 @@ describe('ProductDetailView', () => {
 
       const { wrapper } = await mountAt('/products/abc')
 
-      expect(wrapper.text()).toContain('Product could not be loaded')
-      expect(wrapper.get('button').text()).toBe('Retry')
+      expect(wrapper.text()).toContain("Couldn't load the product")
+      expect(wrapper.get('button').text()).toBe('Try again')
       expect(wrapper.findComponent(ProductDescription).exists()).toBe(false)
     })
 
@@ -147,7 +147,7 @@ describe('ProductDetailView', () => {
 
       expect(getProduct).toHaveBeenCalledTimes(2)
       expect(wrapper.findComponent(ProductDescription).exists()).toBe(true)
-      expect(wrapper.text()).not.toContain('Product could not be loaded')
+      expect(wrapper.text()).not.toContain("Couldn't load the product")
     })
   })
 

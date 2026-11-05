@@ -6,6 +6,7 @@ import ProductActions from '@/components/ProductActions.vue'
 import ProductDetailSkeleton from '@/components/ProductDetailSkeleton.vue'
 import ProductDescription from '@/components/ProductDescription.vue'
 import ProductImage from '@/components/ProductImage.vue'
+import StateMessage from '@/components/StateMessage.vue'
 import { useProduct } from '@/composables/useProduct'
 
 const route = useRoute()
@@ -58,10 +59,14 @@ const name = computed(
       <p class="sr-only" role="status">Loading product</p>
       <ProductDetailSkeleton aria-hidden="true" />
     </div>
-    <div v-else-if="error || !product" role="alert">
-      <p>Product could not be loaded</p>
-      <button type="button" @click="reload">Retry</button>
-    </div>
+    <StateMessage
+      v-else-if="error || !product"
+      icon="error"
+      title="Couldn't load the product"
+      description="Something went wrong while contacting the server. Check your connection and try again."
+    >
+      <button type="button" @click="reload">Try again</button>
+    </StateMessage>
     <template v-else>
       <div class="layout">
         <ProductImage class="sticky" :src="product.imgUrl" :alt="name" />
