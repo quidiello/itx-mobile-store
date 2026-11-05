@@ -8,6 +8,7 @@ import ProductDetailSkeleton from '@/components/ProductDetailSkeleton.vue'
 import ProductDescription from '@/components/ProductDescription.vue'
 import ProductImage from '@/components/ProductImage.vue'
 import StateMessage from '@/components/StateMessage.vue'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useProduct } from '@/composables/useProduct'
 
 const route = useRoute()
@@ -24,10 +25,12 @@ function goBack() {
 const name = computed(
   () => [product.value?.brand, product.value?.model].filter(Boolean).join(' ') || 'Product',
 )
+
+usePageTitle(() => (product.value ? name.value : undefined))
 </script>
 
 <template>
-  <main>
+  <main tabindex="-1">
     <PageToolbar>
       <template #leading>
         <RouterLink v-slot="{ href }" to="/" custom>

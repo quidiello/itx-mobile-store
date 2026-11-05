@@ -7,8 +7,11 @@ import ProductCard from '@/components/ProductCard.vue'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import StateMessage from '@/components/StateMessage.vue'
+import { usePageTitle } from '@/composables/usePageTitle'
 import { useProducts } from '@/composables/useProducts'
 import { filterProducts } from '@/utils/filterProducts'
+
+usePageTitle('Products')
 
 const route = useRoute()
 const router = useRouter()
@@ -25,7 +28,9 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
 </script>
 
 <template>
-  <main>
+  <main tabindex="-1">
+    <h1 class="sr-only">Products</h1>
+
     <PageToolbar>
       <SearchBar v-model="query" />
     </PageToolbar>

@@ -24,4 +24,16 @@ describe('NotFoundView', () => {
     expect(link.text()).toBe('Back to the product list')
     expect(link.attributes('href')).toBe('/')
   })
+
+  it('titles the document as a page that was not found', async () => {
+    await mountView()
+
+    expect(document.title).toBe('Page not found · Mobile Store')
+  })
+
+  it('can receive the focus when the user arrives from another page', async () => {
+    const wrapper = await mountView()
+
+    expect(wrapper.get('main').attributes('tabindex')).toBe('-1')
+  })
 })

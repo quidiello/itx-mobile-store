@@ -170,4 +170,18 @@ describe('ProductDetailView', () => {
 
     expect(getProduct).toHaveBeenLastCalledWith('other')
   })
+
+  describe('page', () => {
+    it('titles the document with the name of the product once it is loaded', async () => {
+      await mountAt('/products/abc')
+
+      expect(document.title).toBe('Acer Iconia Talk S · Mobile Store')
+    })
+
+    it('can receive the focus when the user arrives from another page', async () => {
+      const { wrapper } = await mountAt('/products/abc')
+
+      expect(wrapper.get('main').attributes('tabindex')).toBe('-1')
+    })
+  })
 })

@@ -31,4 +31,18 @@ describe('App', () => {
 
     expect(wrapper.text()).toContain('Page not found')
   })
+
+  it('announces the new page once the user navigates, not when the app opens', async () => {
+    const router = createRouter({ history: createMemoryHistory(), routes })
+    await router.push('/')
+    const wrapper = mount(App, { global: { plugins: [router, createPinia()] } })
+    await flushPromises()
+    const announcement = () => wrapper.get('[role="status"]').text()
+    expect(announcement()).toBe('')
+
+    await router.push('/loquesea')
+    await flushPromises()
+
+    expect(announcement()).toBe('Page not found · Mobile Store')
+  })
 })

@@ -20,6 +20,10 @@ main {
   padding: var(--space-5) var(--space-4) var(--space-7);
 }
 
+main:focus {
+  outline: none;
+}
+
 h1 {
   margin: var(--space-4) 0 var(--space-5);
   font-size: var(--text-xl);

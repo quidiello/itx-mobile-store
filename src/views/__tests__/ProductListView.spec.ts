@@ -148,4 +148,24 @@ describe('ProductListView', () => {
       expect(cards(wrapper)).toHaveLength(3)
     })
   })
+
+  describe('page', () => {
+    it('has a heading for the page', async () => {
+      const { wrapper } = await mountAt('/')
+
+      expect(wrapper.get('h1').text()).toBe('Products')
+    })
+
+    it('titles the document as the list of products', async () => {
+      await mountAt('/')
+
+      expect(document.title).toBe('Products · Mobile Store')
+    })
+
+    it('can receive the focus when the user arrives from another page', async () => {
+      const { wrapper } = await mountAt('/')
+
+      expect(wrapper.get('main').attributes('tabindex')).toBe('-1')
+    })
+  })
 })
