@@ -71,8 +71,8 @@ describe('ProductListView', () => {
 
       const { wrapper } = await mountAt('/')
 
-      expect(wrapper.text()).toContain('Products could not be loaded')
-      expect(wrapper.get('button').text()).toBe('Retry')
+      expect(wrapper.text()).toContain("Couldn't load the products")
+      expect(wrapper.get('button').text()).toBe('Try again')
       expect(cards(wrapper)).toHaveLength(0)
     })
 
@@ -85,7 +85,7 @@ describe('ProductListView', () => {
 
       expect(getProducts).toHaveBeenCalledTimes(2)
       expect(cards(wrapper)).toHaveLength(3)
-      expect(wrapper.text()).not.toContain('Products could not be loaded')
+      expect(wrapper.text()).not.toContain("Couldn't load the products")
     })
 
     it('tells that there are no products when the list is empty', async () => {
@@ -93,7 +93,7 @@ describe('ProductListView', () => {
 
       const { wrapper } = await mountAt('/')
 
-      expect(wrapper.text()).toContain('No products available')
+      expect(wrapper.text()).toContain('No products yet')
     })
   })
 

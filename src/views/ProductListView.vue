@@ -6,6 +6,7 @@ import PageToolbar from '@/components/PageToolbar.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue'
 import SearchBar from '@/components/SearchBar.vue'
+import StateMessage from '@/components/StateMessage.vue'
 import { useProducts } from '@/composables/useProducts'
 import { filterProducts } from '@/utils/filterProducts'
 
@@ -33,12 +34,30 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
       <p class="sr-only" role="status">Loading products</p>
       <ProductCardSkeleton v-for="n in 8" :key="n" :index="n" aria-hidden="true" />
     </div>
-    <div v-else-if="error" role="alert">
-      <p>Products could not be loaded</p>
-      <button type="button" @click="reload">Retry</button>
-    </div>
-    <p v-else-if="products.length === 0">No products available</p>
-    <p v-else-if="visibleProducts.length === 0">No products match "{{ query }}"</p>
+    <StateMessage
+      v-else-if="error"
+      icon="error"
+      title="Couldn't load the products"
+      description="Something went wrong while contacting the server. Check your connection and try again."
+    >
+      <button type="button" @click="reload">Try again</button>
+    </StateMessage>
+    <StateMessage
+      v-else-if="products.length === 0"
+      icon="empty"
+      title="No products yet"
+      description="There is nothing in the store right now. Come back in a little while."
+    >
+      <button type="button" class="secondary" @click="reload">Refresh</button>
+    </StateMessage>
+    <StateMessage
+      v-else-if="visibleProducts.length === 0"
+      icon="search"
+      :title="`No products match &quot;${query}&quot;`"
+      description="Check the spelling or try a different brand or model."
+    >
+      <button type="button" class="secondary" @click="query = ''">Clear search</button>
+    </StateMessage>
     <ul v-else class="grid">
       <li v-for="product in visibleProducts" :key="product.id">
         <ProductCard :product="product" />
