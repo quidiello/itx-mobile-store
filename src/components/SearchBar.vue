@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useId, useTemplateRef } from 'vue'
 import CloseIcon from './icons/ui/CloseIcon.vue'
+import CommandIcon from './icons/ui/CommandIcon.vue'
 import SearchIcon from './icons/ui/SearchIcon.vue'
 
 const query = defineModel<string>({ required: true })
@@ -12,22 +13,17 @@ function clear() {
   input.value?.focus()
 }
 
-function isTyping(target: EventTarget | null) {
-  return (
-    target instanceof HTMLElement &&
-    (target.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName))
-  )
-}
+const isMac = /Mac|iPhone|iPad/.test(navigator.platform)
 
-function focusOnSlash(event: KeyboardEvent) {
-  if (event.key !== '/' || event.ctrlKey || event.metaKey || event.altKey) return
-  if (isTyping(event.target)) return
+function focusOnShortcut(event: KeyboardEvent) {
+  const modifier = event.ctrlKey || event.metaKey
+  if (!modifier || event.altKey || event.shiftKey || event.key.toLowerCase() !== 'k') return
   event.preventDefault()
   input.value?.focus()
 }
 
-onMounted(() => document.addEventListener('keydown', focusOnSlash))
-onBeforeUnmount(() => document.removeEventListener('keydown', focusOnSlash))
+onMounted(() => document.addEventListener('keydown', focusOnShortcut))
+onBeforeUnmount(() => document.removeEventListener('keydown', focusOnShortcut))
 </script>
 
 <template>
@@ -40,9 +36,12 @@ onBeforeUnmount(() => document.removeEventListener('keydown', focusOnSlash))
       v-model="query"
       type="search"
       placeholder="Search by brand or model"
-      aria-keyshortcuts="/"
+      aria-keyshortcuts="Control+K Meta+K"
     />
-    <kbd v-if="!query" class="shortcut" aria-hidden="true">/</kbd>
+    <span v-if="!query" class="shortcut" aria-hidden="true">
+      <kbd class="key"><CommandIcon v-if="isMac" :size="11" /><template v-else>Ctrl</template></kbd>
+      <kbd class="key">K</kbd>
+    </span>
     <button v-if="query" type="button" class="clear" aria-label="Clear search" @click="clear">
       <CloseIcon :size="12" />
     </button>
@@ -100,21 +99,27 @@ input::-webkit-search-cancel-button {
 .shortcut {
   display: none;
   flex: none;
-  min-width: 1.375rem;
-  height: 1.375rem;
-  border: 1px solid var(--color-border-strong);
-  border-radius: 6px;
+  gap: 3px;
+}
+
+.key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding: 0 var(--space-1);
+  border-radius: 5px;
+  background: var(--color-bg);
   color: var(--color-text-muted);
-  font-family: var(--font-mono);
+  font: inherit;
   font-size: var(--text-xs);
-  font-weight: 500;
-  line-height: 1.125rem;
-  text-align: center;
+  font-weight: 600;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .search:not(:focus-within) .shortcut {
-    display: block;
+    display: flex;
   }
 }
 
