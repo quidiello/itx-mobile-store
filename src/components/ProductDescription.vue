@@ -6,9 +6,11 @@ import { productName } from '@/utils/productName'
 import type { Component } from 'vue'
 import ChevronIcon from './icons/ChevronIcon.vue'
 import BatteryIcon from './icons/specs/BatteryIcon.vue'
+import BrandIcon from './icons/specs/BrandIcon.vue'
 import CameraIcon from './icons/specs/CameraIcon.vue'
 import CpuIcon from './icons/specs/CpuIcon.vue'
 import DimensionsIcon from './icons/specs/DimensionsIcon.vue'
+import ModelIcon from './icons/specs/ModelIcon.vue'
 import OsIcon from './icons/specs/OsIcon.vue'
 import RamIcon from './icons/specs/RamIcon.vue'
 import ResolutionIcon from './icons/specs/ResolutionIcon.vue'
@@ -35,6 +37,8 @@ const unavailable = computed(() => props.product.price === null)
 const rows = computed<Row[]>(() => {
   const { product } = props
   return [
+    { label: 'Brand', value: product.brand, icon: BrandIcon, main: true },
+    { label: 'Model', value: product.model, icon: ModelIcon, main: true },
     { label: 'CPU', value: product.cpu, icon: CpuIcon, main: true },
     { label: 'RAM', value: product.ram, icon: RamIcon, main: true },
     { label: 'Screen size', value: product.screenSize, icon: ScreenIcon, main: true },

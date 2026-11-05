@@ -18,6 +18,8 @@ function mountDescription(item = product) {
 
 describe('ProductDescription', () => {
   it.each([
+    ['Brand', 'Acer'],
+    ['Model', 'Iconia Talk S'],
     ['CPU', 'Quad-core 1.3 GHz Cortex-A53'],
     ['RAM', '2 GB RAM'],
     ['Operating system', 'Android 6.0 (Marshmallow)'],
@@ -65,6 +67,13 @@ describe('ProductDescription', () => {
     expect(wrapper.get('.price').text()).toBe('Not available')
   })
 
+  it('shows a dash in the brand and the model rows when the product has neither', () => {
+    const wrapper = mountDescription({ ...product, brand: null, model: null })
+
+    expect(valueOf(wrapper, 'Brand')).toBe('—')
+    expect(valueOf(wrapper, 'Model')).toBe('—')
+  })
+
   it('shows a dash when a specification is missing', () => {
     const wrapper = mountDescription({ ...product, ram: null })
 
@@ -74,8 +83,8 @@ describe('ProductDescription', () => {
   it('shows every specification, each one with its label', () => {
     const wrapper = mountDescription()
 
-    expect(wrapper.findAll('dt')).toHaveLength(10)
-    expect(wrapper.findAll('dd')).toHaveLength(10)
+    expect(wrapper.findAll('dt')).toHaveLength(12)
+    expect(wrapper.findAll('dd')).toHaveLength(12)
   })
 
   describe('see more', () => {
@@ -85,7 +94,15 @@ describe('ProductDescription', () => {
     it('shows the main specifications and hides the rest at first', () => {
       const wrapper = mountDescription()
 
-      for (const label of ['CPU', 'RAM', 'Screen size', 'Battery', 'Primary camera']) {
+      for (const label of [
+        'Brand',
+        'Model',
+        'CPU',
+        'RAM',
+        'Screen size',
+        'Battery',
+        'Primary camera',
+      ]) {
         expect(rowOf(wrapper, label).attributes('hidden')).toBeUndefined()
       }
       for (const label of [

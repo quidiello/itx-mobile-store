@@ -11,7 +11,7 @@ const icons = Object.entries(modules)
 
 describe('icons', () => {
   it('finds the icons of the project', () => {
-    expect(icons.length).toBeGreaterThanOrEqual(17)
+    expect(icons.length).toBeGreaterThanOrEqual(19)
   })
 
   describe.each(icons)('%s', (_name, icon) => {
