@@ -4,7 +4,6 @@ import IconBase from '../IconBase.vue'
 
 <template>
   <IconBase>
-    <path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
-    <path d="M12 18h.01" />
+    <path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18" />
   </IconBase>
 </template>
