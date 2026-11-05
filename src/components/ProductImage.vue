@@ -30,7 +30,7 @@ const imageUrl = computed(() => (failed.value ? null : props.src))
   --inset: var(--space-5);
 
   position: relative;
-  aspect-ratio: 1;
+  aspect-ratio: 3 / 4;
   padding: var(--inset);
   border-radius: var(--radius-2xl);
   background: var(--color-surface);
@@ -38,9 +38,11 @@ const imageUrl = computed(() => (failed.value ? null : props.src))
 }
 
 img {
+  position: absolute;
+  inset: var(--inset);
   display: block;
-  width: 100%;
-  height: 100%;
+  width: calc(100% - 2 * var(--inset));
+  height: calc(100% - 2 * var(--inset));
   object-fit: contain;
 }
 
