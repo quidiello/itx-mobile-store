@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute } from 'vue-router'
+import HomeIcon from './icons/ui/HomeIcon.vue'
 import ProductBreadcrumb from './ProductBreadcrumb.vue'
 
 const route = useRoute()
@@ -12,8 +13,10 @@ const isProductDetail = computed(() => route.name === 'product-detail')
 <template>
   <nav aria-label="Breadcrumb">
     <ol>
-      <li v-if="isProductList" class="home" aria-current="page">Home</li>
-      <li v-else><RouterLink to="/" class="home">Home</RouterLink></li>
+      <li v-if="isProductList" class="home" aria-current="page"><HomeIcon />Home</li>
+      <li v-else>
+        <RouterLink to="/" class="home"><HomeIcon />Home</RouterLink>
+      </li>
       <ProductBreadcrumb v-if="isProductDetail" :id="String(route.params.id)" />
     </ol>
   </nav>
@@ -52,25 +55,10 @@ li[aria-current='page'] {
   font-weight: 500;
 }
 
-li + li {
-  padding-left: 1.25rem;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239aa1ae' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 6 6 6-6 6'/%3E%3C/svg%3E")
-    no-repeat left center / 1rem;
-}
-
 .home {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2);
-}
-
-.home::before {
-  content: '';
-  width: 1rem;
-  height: 1rem;
-  background: currentcolor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m3 11 9-8 9 8'/%3E%3Cpath d='M5 10v10h14V10'/%3E%3C/svg%3E")
-    no-repeat center / contain;
 }
 
 a.home {

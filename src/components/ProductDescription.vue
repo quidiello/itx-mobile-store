@@ -2,15 +2,25 @@
 import { computed, ref, useId } from 'vue'
 import type { ProductDetail } from '@/api/schemas'
 import { formatPrice } from '@/utils/formatPrice'
+import type { Component } from 'vue'
+import ChevronIcon from './icons/ChevronIcon.vue'
+import BatteryIcon from './icons/specs/BatteryIcon.vue'
+import CameraIcon from './icons/specs/CameraIcon.vue'
+import CpuIcon from './icons/specs/CpuIcon.vue'
+import DimensionsIcon from './icons/specs/DimensionsIcon.vue'
+import OsIcon from './icons/specs/OsIcon.vue'
+import RamIcon from './icons/specs/RamIcon.vue'
+import ResolutionIcon from './icons/specs/ResolutionIcon.vue'
+import ScreenIcon from './icons/specs/ScreenIcon.vue'
+import WeightIcon from './icons/specs/WeightIcon.vue'
 import SpecIcon from './SpecIcon.vue'
-import type { SpecIconName } from './specIcons'
 
 const props = defineProps<{ product: ProductDetail }>()
 
 interface Row {
   label: string
   value: string | null
-  icon: SpecIconName
+  icon: Component
   main: boolean
 }
 
@@ -26,24 +36,24 @@ const unavailable = computed(() => props.product.price === null)
 const rows = computed<Row[]>(() => {
   const { product } = props
   return [
-    { label: 'CPU', value: product.cpu, icon: 'cpu', main: true },
-    { label: 'RAM', value: product.ram, icon: 'ram', main: true },
-    { label: 'Screen size', value: product.screenSize, icon: 'screen', main: true },
-    { label: 'Battery', value: product.battery, icon: 'battery', main: true },
-    { label: 'Primary camera', value: product.primaryCamera, icon: 'camera', main: true },
-    { label: 'Operating system', value: product.os, icon: 'os', main: false },
+    { label: 'CPU', value: product.cpu, icon: CpuIcon, main: true },
+    { label: 'RAM', value: product.ram, icon: RamIcon, main: true },
+    { label: 'Screen size', value: product.screenSize, icon: ScreenIcon, main: true },
+    { label: 'Battery', value: product.battery, icon: BatteryIcon, main: true },
+    { label: 'Primary camera', value: product.primaryCamera, icon: CameraIcon, main: true },
+    { label: 'Operating system', value: product.os, icon: OsIcon, main: false },
     {
       label: 'Screen resolution',
       value: product.screenResolution,
-      icon: 'resolution',
+      icon: ResolutionIcon,
       main: false,
     },
-    { label: 'Secondary camera', value: product.secondaryCamera, icon: 'camera', main: false },
-    { label: 'Dimensions', value: product.dimensions, icon: 'dimensions', main: false },
+    { label: 'Secondary camera', value: product.secondaryCamera, icon: CameraIcon, main: false },
+    { label: 'Dimensions', value: product.dimensions, icon: DimensionsIcon, main: false },
     {
       label: 'Weight',
       value: product.weight === null ? null : `${product.weight} g`,
-      icon: 'weight',
+      icon: WeightIcon,
       main: false,
     },
   ]
@@ -61,7 +71,7 @@ const hiddenCount = computed(() => rows.value.filter((row) => !row.main).length)
     <dl :id="listId">
       <div v-for="row in rows" :key="row.label" class="row" :hidden="!row.main && !expanded">
         <dt>
-          <SpecIcon :name="row.icon" />
+          <SpecIcon><component :is="row.icon" /></SpecIcon>
           <span class="label">{{ row.label }}</span>
         </dt>
         <dd>{{ row.value ?? '—' }}</dd>
@@ -75,20 +85,7 @@ const hiddenCount = computed(() => rows.value.filter((row) => !row.main).length)
       @click="expanded = !expanded"
     >
       {{ expanded ? 'Show fewer' : `Show ${hiddenCount} more` }}
-      <svg
-        viewBox="0 0 24 24"
-        width="16"
-        height="16"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-        :class="{ open: expanded }"
-      >
-        <path d="m6 9 6 6 6-6" />
-      </svg>
+      <ChevronIcon :direction="expanded ? 'up' : 'down'" />
     </button>
   </div>
 </template>
@@ -184,14 +181,6 @@ dd {
 .toggle:hover:not(:disabled) {
   background: none;
   color: var(--color-accent-hover);
-}
-
-.toggle svg {
-  transition: transform 0.2s ease;
-}
-
-.toggle svg.open {
-  transform: rotate(180deg);
 }
 
 @media (max-width: 40rem) {

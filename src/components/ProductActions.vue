@@ -3,6 +3,7 @@ import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch 
 import type { ProductDetail, ProductOption } from '@/api/schemas'
 import { useCartStore } from '@/stores/cart'
 import { formatPrice } from '@/utils/formatPrice'
+import ChevronIcon from './icons/ChevronIcon.vue'
 
 const props = defineProps<{ product: ProductDetail }>()
 
@@ -141,19 +142,7 @@ async function add() {
         <strong>{{ formatPrice(product.price) }}</strong>
         <span>
           {{ summary }}
-          <svg
-            viewBox="0 0 24 24"
-            width="14"
-            height="14"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2.5"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            aria-hidden="true"
-          >
-            <path d="m6 15 6-6 6 6" />
-          </svg>
+          <ChevronIcon direction="up" :size="14" />
         </span>
       </button>
       <button type="submit" class="submit" :disabled="!canAdd || adding">

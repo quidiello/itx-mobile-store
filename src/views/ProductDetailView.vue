@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { RouterLink, useRoute, useRouter } from 'vue-router'
+import ArrowLeftIcon from '@/components/icons/ui/ArrowLeftIcon.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
 import ProductActions from '@/components/ProductActions.vue'
 import ProductDetailSkeleton from '@/components/ProductDetailSkeleton.vue'
@@ -36,20 +37,7 @@ const name = computed(
             aria-label="Back to the product list"
             @click.prevent="goBack"
           >
-            <svg
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M19 12H5" />
-              <path d="m12 19-7-7 7-7" />
-            </svg>
+            <ArrowLeftIcon :size="18" />
           </a>
         </RouterLink>
       </template>

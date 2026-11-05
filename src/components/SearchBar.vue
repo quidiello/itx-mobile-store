@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, useId, useTemplateRef } from 'vue'
+import CloseIcon from './icons/ui/CloseIcon.vue'
+import SearchIcon from './icons/ui/SearchIcon.vue'
 
 const query = defineModel<string>({ required: true })
 const inputId = useId()
@@ -31,7 +33,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', focusOnSlash))
 <template>
   <div class="search">
     <label :for="inputId" class="sr-only">Search by brand or model</label>
-    <span class="icon" aria-hidden="true" />
+    <SearchIcon class="icon" />
     <input
       :id="inputId"
       ref="input"
@@ -42,18 +44,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', focusOnSlash))
     />
     <kbd v-if="!query" class="shortcut" aria-hidden="true">/</kbd>
     <button v-if="query" type="button" class="clear" aria-label="Clear search" @click="clear">
-      <svg
-        viewBox="0 0 24 24"
-        width="12"
-        height="12"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2.5"
-        stroke-linecap="round"
-        aria-hidden="true"
-      >
-        <path d="M6 6l12 12M18 6 6 18" />
-      </svg>
+      <CloseIcon :size="12" />
     </button>
   </div>
 </template>
@@ -81,11 +72,6 @@ onBeforeUnmount(() => document.removeEventListener('keydown', focusOnSlash))
 
 .icon {
   flex: none;
-  width: 1rem;
-  height: 1rem;
-  background: currentcolor;
-  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='m20 20-3.5-3.5'/%3E%3C/svg%3E")
-    no-repeat center / contain;
 }
 
 input {

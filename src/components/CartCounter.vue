@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useCartStore } from '@/stores/cart'
+import CartIcon from './icons/ui/CartIcon.vue'
 
 const cart = useCartStore()
 
@@ -9,21 +10,7 @@ const description = computed(() => `Cart, ${cart.count} ${cart.count === 1 ? 'it
 
 <template>
   <div class="cart" role="status">
-    <svg
-      viewBox="0 0 24 24"
-      width="18"
-      height="18"
-      fill="none"
-      stroke="currentColor"
-      stroke-width="2"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"
-    >
-      <circle cx="9" cy="20" r="1" />
-      <circle cx="18" cy="20" r="1" />
-      <path d="M2 3h3l2.5 12h11l2-8H6" />
-    </svg>
+    <CartIcon :size="18" />
     <span class="label" aria-hidden="true">Cart</span>
     <span class="count" :class="{ empty: cart.count === 0 }" aria-hidden="true">{{
       cart.count

@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import CloudOffIcon from './icons/CloudOffIcon.vue'
-import PackageIcon from './icons/PackageIcon.vue'
-import SearchIcon from './icons/SearchIcon.vue'
+import CloudOffIcon from './icons/states/CloudOffIcon.vue'
+import PackageIcon from './icons/states/PackageIcon.vue'
+import SearchIcon from './icons/ui/SearchIcon.vue'
 
 const props = defineProps<{
   icon: 'error' | 'search' | 'empty'
@@ -17,7 +17,7 @@ const role = computed(() => (props.icon === 'error' ? 'alert' : 'status'))
 
 <template>
   <div class="state" :class="{ error: icon === 'error' }" :role="role">
-    <span class="icon" aria-hidden="true"><component :is="icons[icon]" /></span>
+    <span class="icon" aria-hidden="true"><component :is="icons[icon]" :size="26" /></span>
     <p class="title">{{ title }}</p>
     <p v-if="description" class="description">{{ description }}</p>
     <div v-if="$slots.default" class="action"><slot /></div>

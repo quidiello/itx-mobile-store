@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import ArrowUpIcon from './icons/ui/ArrowUpIcon.vue'
 
 const SHOW_AFTER_PX = 200
 
@@ -25,20 +26,7 @@ onBeforeUnmount(() => window.removeEventListener('scroll', update))
 <template>
   <Transition name="fade">
     <button v-if="visible" type="button" class="top" aria-label="Back to top" @click="scrollToTop">
-      <svg
-        viewBox="0 0 24 24"
-        width="20"
-        height="20"
-        fill="none"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-linejoin="round"
-        aria-hidden="true"
-      >
-        <path d="M12 19V5" />
-        <path d="m5 12 7-7 7 7" />
-      </svg>
+      <ArrowUpIcon :size="20" />
     </button>
   </Transition>
 </template>
