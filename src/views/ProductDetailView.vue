@@ -10,6 +10,7 @@ import ProductImage from '@/components/ProductImage.vue'
 import StateMessage from '@/components/StateMessage.vue'
 import { usePageTitle } from '@/composables/usePageTitle'
 import { useProduct } from '@/composables/useProduct'
+import { productName } from '@/utils/productName'
 
 const route = useRoute()
 const router = useRouter()
@@ -22,9 +23,7 @@ function goBack() {
   else router.push('/')
 }
 
-const name = computed(
-  () => [product.value?.brand, product.value?.model].filter(Boolean).join(' ') || 'Product',
-)
+const name = computed(() => productName(product.value))
 
 usePageTitle(() => {
   if (loading.value) return undefined

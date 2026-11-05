@@ -2,6 +2,7 @@
 import { computed, ref, useId } from 'vue'
 import type { ProductDetail } from '@/api/schemas'
 import { formatPrice } from '@/utils/formatPrice'
+import { productName } from '@/utils/productName'
 import type { Component } from 'vue'
 import ChevronIcon from './icons/ChevronIcon.vue'
 import BatteryIcon from './icons/specs/BatteryIcon.vue'
@@ -27,9 +28,7 @@ interface Row {
 const listId = useId()
 const expanded = ref(false)
 
-const name = computed(
-  () => [props.product.brand, props.product.model].filter(Boolean).join(' ') || 'Product',
-)
+const name = computed(() => productName(props.product))
 
 const unavailable = computed(() => props.product.price === null)
 
@@ -63,7 +62,7 @@ const hiddenCount = computed(() => rows.value.filter((row) => !row.main).length)
 </script>
 
 <template>
-  <div class="description">
+  <div>
     <div class="head">
       <h1>{{ name }}</h1>
       <p class="price" :class="{ unavailable }">{{ formatPrice(product.price) }}</p>
