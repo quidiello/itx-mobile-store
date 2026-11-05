@@ -168,4 +168,40 @@ describe('ProductListView', () => {
       expect(wrapper.get('main').attributes('tabindex')).toBe('-1')
     })
   })
+
+  describe('results count', () => {
+    it('tells how many products there are', async () => {
+      const { wrapper } = await mountAt('/')
+
+      expect(wrapper.get('.count').text()).toBe('3 products')
+    })
+
+    it('tells how many of them match the search', async () => {
+      const { wrapper } = await mountAt('/?q=acer')
+
+      expect(wrapper.get('.count').text()).toBe('2 of 3 products')
+    })
+
+    it('is not shown while the products are loading', async () => {
+      getProducts.mockReturnValue(new Promise(() => {}))
+
+      const { wrapper } = await mountAt('/')
+
+      expect(wrapper.find('.count').exists()).toBe(false)
+    })
+
+    it('is not shown when the products could not be loaded', async () => {
+      getProducts.mockRejectedValue(new Error('network down'))
+
+      const { wrapper } = await mountAt('/')
+
+      expect(wrapper.find('.count').exists()).toBe(false)
+    })
+
+    it('is not shown when nothing matches the search, which has its own message', async () => {
+      const { wrapper } = await mountAt('/?q=nokia')
+
+      expect(wrapper.find('.count').exists()).toBe(false)
+    })
+  })
 })

@@ -5,6 +5,7 @@ import BackToTop from '@/components/BackToTop.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
 import ProductCard from '@/components/ProductCard.vue'
 import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue'
+import ResultsCount from '@/components/ResultsCount.vue'
 import SearchBar from '@/components/SearchBar.vue'
 import StateMessage from '@/components/StateMessage.vue'
 import { usePageTitle } from '@/composables/usePageTitle'
@@ -63,11 +64,14 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
     >
       <button type="button" class="secondary" @click="query = ''">Clear search</button>
     </StateMessage>
-    <ul v-else class="grid">
-      <li v-for="product in visibleProducts" :key="product.id">
-        <ProductCard :product="product" />
-      </li>
-    </ul>
+    <template v-else>
+      <ResultsCount :shown="visibleProducts.length" :total="products.length" />
+      <ul class="grid">
+        <li v-for="product in visibleProducts" :key="product.id">
+          <ProductCard :product="product" />
+        </li>
+      </ul>
+    </template>
 
     <BackToTop />
   </main>
