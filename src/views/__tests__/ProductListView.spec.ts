@@ -204,4 +204,24 @@ describe('ProductListView', () => {
       expect(wrapper.find('.count').exists()).toBe(false)
     })
   })
+
+  describe('clear search', () => {
+    it('removes the search and puts the focus back on the field', async () => {
+      const router = createRouter({ history: createMemoryHistory(), routes })
+      await router.push('/?q=nokia')
+      const wrapper = mount(ProductListView, {
+        global: { plugins: [router] },
+        attachTo: document.body,
+      })
+      await flushPromises()
+      const clear = wrapper.findAll('button').find((button) => button.text() === 'Clear search')!
+
+      await clear.trigger('click')
+      await flushPromises()
+
+      expect(router.currentRoute.value.query).not.toHaveProperty('q')
+      expect(wrapper.get('input').element).toBe(document.activeElement)
+      wrapper.unmount()
+    })
+  })
 })

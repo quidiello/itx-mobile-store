@@ -22,6 +22,8 @@ function focusOnShortcut(event: KeyboardEvent) {
   input.value?.focus()
 }
 
+defineExpose({ focus: () => input.value?.focus() })
+
 onMounted(() => document.addEventListener('keydown', focusOnShortcut))
 onBeforeUnmount(() => document.removeEventListener('keydown', focusOnShortcut))
 </script>
@@ -43,7 +45,7 @@ onBeforeUnmount(() => document.removeEventListener('keydown', focusOnShortcut))
       <kbd class="key">K</kbd>
     </span>
     <button v-if="query" type="button" class="clear" aria-label="Clear search" @click="clear">
-      <CloseIcon :size="12" />
+      <CloseIcon :size="14" />
     </button>
   </div>
 </template>
@@ -128,8 +130,8 @@ input::-webkit-search-cancel-button {
   flex: none;
   align-items: center;
   justify-content: center;
-  width: 1.25rem;
-  height: 1.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
   padding: 0;
   border-radius: 50%;
   background: var(--color-bg);

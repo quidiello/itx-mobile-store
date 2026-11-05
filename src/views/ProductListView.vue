@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import BackToTop from '@/components/BackToTop.vue'
 import PageToolbar from '@/components/PageToolbar.vue'
@@ -25,6 +25,13 @@ const query = computed({
   },
 })
 
+const search = useTemplateRef('search')
+
+function clearSearch() {
+  query.value = ''
+  search.value?.focus()
+}
+
 const visibleProducts = computed(() => filterProducts(products.value, query.value))
 </script>
 
@@ -33,7 +40,7 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
     <h1 class="sr-only">Products</h1>
 
     <PageToolbar>
-      <SearchBar v-model="query" />
+      <SearchBar ref="search" v-model="query" />
     </PageToolbar>
 
     <div v-if="loading" class="grid" aria-busy="true">
@@ -62,7 +69,7 @@ const visibleProducts = computed(() => filterProducts(products.value, query.valu
       :title="`No products match &quot;${query}&quot;`"
       description="Check the spelling or try a different brand or model."
     >
-      <button type="button" class="secondary" @click="query = ''">Clear search</button>
+      <button type="button" class="secondary" @click="clearSearch">Clear search</button>
     </StateMessage>
     <template v-else>
       <ResultsCount :shown="visibleProducts.length" :total="products.length" />

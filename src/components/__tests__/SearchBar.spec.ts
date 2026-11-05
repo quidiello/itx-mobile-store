@@ -187,4 +187,13 @@ describe('SearchBar', () => {
       expect(wrapper.findAll('kbd').map((key) => key.text())).toEqual(['Ctrl', 'K'])
     })
   })
+
+  it('lets its parent put the focus on the field', () => {
+    const wrapper = mount(SearchBar, { props: { modelValue: '' }, attachTo: document.body })
+
+    wrapper.vm.focus()
+
+    expect(wrapper.get('input').element).toBe(document.activeElement)
+    wrapper.unmount()
+  })
 })
