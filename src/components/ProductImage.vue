@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
+import { useImageFallback } from '@/composables/useImageFallback'
 import ProductImagePlaceholder from './ProductImagePlaceholder.vue'
 
 const props = defineProps<{
@@ -7,20 +7,12 @@ const props = defineProps<{
   alt: string
 }>()
 
-const failed = ref(false)
-watch(
-  () => props.src,
-  () => {
-    failed.value = false
-  },
-)
-
-const imageUrl = computed(() => (failed.value ? null : props.src))
+const { url: imageUrl, onError } = useImageFallback(() => props.src)
 </script>
 
 <template>
   <div class="image">
-    <img v-if="imageUrl" :src="imageUrl" :alt="alt" @error="failed = true" />
+    <img v-if="imageUrl" :src="imageUrl" :alt="alt" @error="onError" />
     <ProductImagePlaceholder v-else />
   </div>
 </template>

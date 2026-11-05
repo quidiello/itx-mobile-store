@@ -1,27 +1,19 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import type { Product } from '@/api/schemas'
+import { useImageFallback } from '@/composables/useImageFallback'
 import { formatPrice } from '@/utils/formatPrice'
 import ProductImagePlaceholder from './ProductImagePlaceholder.vue'
 
 const props = defineProps<{ product: Product }>()
 
-const imageFailed = ref(false)
-watch(
-  () => props.product.imgUrl,
-  () => {
-    imageFailed.value = false
-  },
-)
-
-const imageUrl = computed(() => (imageFailed.value ? null : props.product.imgUrl))
+const { url: imageUrl, onError } = useImageFallback(() => props.product.imgUrl)
 </script>
 
 <template>
   <RouterLink :to="{ name: 'product-detail', params: { id: product.id } }" class="card">
     <div class="image">
-      <img v-if="imageUrl" :src="imageUrl" alt="" loading="lazy" @error="imageFailed = true" />
+      <img v-if="imageUrl" :src="imageUrl" alt="" loading="lazy" @error="onError" />
       <ProductImagePlaceholder v-else />
     </div>
     <div class="row">
