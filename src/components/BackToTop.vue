@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 import ArrowUpIcon from './icons/ui/ArrowUpIcon.vue'
 
 const SHOW_AFTER_PX = 200
 
 const visible = ref(false)
+const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
 
 function update() {
   visible.value = window.scrollY > SHOW_AFTER_PX
 }
 
 function scrollToTop() {
-  const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
-  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+  window.scrollTo({ top: 0, behavior: reduceMotion.value ? 'auto' : 'smooth' })
 }
 
 onMounted(() => {

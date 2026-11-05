@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, ref, useId, useTemplateRef, watch } from 'vue'
 import type { ProductDetail, ProductOption } from '@/api/schemas'
 import { useCartStore } from '@/stores/cart'
 import { useMediaQuery } from '@/composables/useMediaQuery'
+import { useScrollLock } from '@/composables/useScrollLock'
 import { formatPrice } from '@/utils/formatPrice'
 import ChevronIcon from './icons/ChevronIcon.vue'
 
@@ -58,13 +59,7 @@ watch(narrow, (isNarrow) => {
   if (!isNarrow) sheetOpen.value = false
 })
 
-watch(sheetOpen, (open) => {
-  document.body.style.overflow = open ? 'hidden' : ''
-})
-
-onBeforeUnmount(() => {
-  document.body.style.overflow = ''
-})
+useScrollLock(sheetOpen)
 
 async function openSheet() {
   sheetOpen.value = true

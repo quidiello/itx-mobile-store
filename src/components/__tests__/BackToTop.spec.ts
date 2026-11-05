@@ -66,7 +66,11 @@ describe('BackToTop', () => {
   })
 
   it('scrolls without animation when the user prefers reduced motion', async () => {
-    vi.stubGlobal('matchMedia', () => ({ matches: true }))
+    vi.stubGlobal('matchMedia', () => ({
+      matches: true,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+    }))
     const wrapper = mount(BackToTop)
     scrollTo(800)
     await wrapper.vm.$nextTick()

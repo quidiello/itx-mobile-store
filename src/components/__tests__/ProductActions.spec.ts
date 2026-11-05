@@ -28,10 +28,13 @@ function deferred<T>() {
   return { promise, resolve, reject }
 }
 
+const mountedActions: { unmount: () => void }[] = []
+
 function mountActions(product: ProductDetail = twoStorages) {
   const pinia = createPinia()
   setActivePinia(pinia)
   const wrapper = mount(ProductActions, { props: { product }, global: { plugins: [pinia] } })
+  mountedActions.push(wrapper)
   return { wrapper, cart: useCartStore() }
 }
 
@@ -60,6 +63,7 @@ beforeEach(() => {
 })
 
 afterEach(() => {
+  mountedActions.splice(0).forEach((wrapper) => wrapper.unmount())
   vi.unstubAllGlobals()
 })
 
