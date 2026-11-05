@@ -145,6 +145,24 @@ describe('productDetailSchema', () => {
       expect(result.success).toBe(false)
     })
 
+    it.each(['', ' ', '-'])('turns an option name of %j into null', (name) => {
+      const { options } = productDetailSchema.parse({
+        id: 'p1',
+        options: { storages: [{ code: 2000, name }] },
+      })
+
+      expect(options.storages).toEqual([{ code: 2000, name: null }])
+    })
+
+    it('trims the name of an option', () => {
+      const { options } = productDetailSchema.parse({
+        id: 'p1',
+        options: { colors: [{ code: 1000, name: ' Black ' }] },
+      })
+
+      expect(options.colors).toEqual([{ code: 1000, name: 'Black' }])
+    })
+
     it('rejects an option without name', () => {
       const result = productDetailSchema.safeParse({
         id: 'p1',

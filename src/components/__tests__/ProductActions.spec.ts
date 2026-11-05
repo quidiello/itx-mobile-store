@@ -21,6 +21,10 @@ const onlyStorages: ProductDetail = {
   ...twoStorages,
   options: { ...twoStorages.options, colors: [] },
 }
+const unnamedStorage: ProductDetail = {
+  ...twoStorages,
+  options: { ...twoStorages.options, storages: [{ code: 2000, name: null }] },
+}
 const onlyColors: ProductDetail = {
   ...twoStorages,
   options: { ...twoStorages.options, storages: [] },
@@ -122,6 +126,13 @@ describe('ProductActions', () => {
       expect(legends).toContain(shown)
       expect(legends).not.toContain(missing)
       expect(wrapper.text()).not.toContain('No options available')
+    })
+
+    it('names an option that comes without name as not specified and selects it', () => {
+      const { wrapper } = mountActions(unnamedStorage)
+
+      expect(radio(wrapper, 'Storage', 'Not specified').element.checked).toBe(true)
+      expect(button(wrapper).element.disabled).toBe(false)
     })
 
     it('starts again from the options of another product when it changes', async () => {
@@ -404,6 +415,12 @@ describe('ProductActions', () => {
       await radio(wrapper, 'Storage', '32 GB').setValue(true)
 
       expect(summaryOf(wrapper).get('.choice').text()).toBe('32 GB · Black')
+    })
+
+    it('names an option that comes without name as not specified', () => {
+      const { wrapper } = mountActions(unnamedStorage)
+
+      expect(summaryOf(wrapper).get('.choice').text()).toBe('Not specified · Black')
     })
 
     it('tells that the price is not available when there is none', () => {

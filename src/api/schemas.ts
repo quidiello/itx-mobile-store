@@ -2,16 +2,19 @@ import { z } from 'zod'
 
 const EMPTY_MARKERS = new Set(['', '-'])
 
+function emptyToNull(value: string) {
+  const trimmed = value.trim()
+  return EMPTY_MARKERS.has(trimmed) ? null : trimmed
+}
+
 const text = z
   .union([z.string(), z.array(z.string())])
   .nullish()
-  .transform((value) => {
-    const joined = Array.isArray(value)
-      ? value.filter((item) => item.trim() !== '').join(', ')
-      : (value ?? '')
-    const trimmed = joined.trim()
-    return EMPTY_MARKERS.has(trimmed) ? null : trimmed
-  })
+  .transform((value) =>
+    emptyToNull(
+      Array.isArray(value) ? value.filter((item) => item.trim() !== '').join(', ') : (value ?? ''),
+    ),
+  )
 
 // Do not use z.coerce.number(): it turns "" into 0
 const numeric = z
@@ -25,7 +28,7 @@ const numeric = z
 
 const option = z.object({
   code: z.number().int(),
-  name: z.string(),
+  name: z.string().transform(emptyToNull),
 })
 
 export const productSchema = z.object({

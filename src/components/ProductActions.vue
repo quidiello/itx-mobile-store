@@ -30,12 +30,15 @@ const narrow = useMediaQuery('(max-width: 40rem)')
 const hasOptions = computed(
   () => props.product.options.storages.length > 0 && props.product.options.colors.length > 0,
 )
+const optionName = (option: ProductOption) => option.name ?? 'Not specified'
+
 const summary = computed(() =>
   [
-    props.product.options.storages.find((option) => option.code === storageCode.value)?.name,
-    props.product.options.colors.find((option) => option.code === colorCode.value)?.name,
+    props.product.options.storages.find((option) => option.code === storageCode.value),
+    props.product.options.colors.find((option) => option.code === colorCode.value),
   ]
-    .filter(Boolean)
+    .filter((option) => option !== undefined)
+    .map(optionName)
     .join(' · '),
 )
 const hasPrice = computed(() => props.product.price !== null)
@@ -155,7 +158,7 @@ async function add() {
         <legend>Storage</legend>
         <label v-for="option in product.options.storages" :key="option.code">
           <input v-model="storageCode" type="radio" name="storage" :value="option.code" />
-          {{ option.name }}
+          {{ optionName(option) }}
         </label>
       </fieldset>
 
@@ -163,7 +166,7 @@ async function add() {
         <legend>Color</legend>
         <label v-for="option in product.options.colors" :key="option.code">
           <input v-model="colorCode" type="radio" name="color" :value="option.code" />
-          {{ option.name }}
+          {{ optionName(option) }}
         </label>
       </fieldset>
 

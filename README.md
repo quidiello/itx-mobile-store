@@ -103,6 +103,7 @@ Los datos se normalizan en `src/api/schemas.ts` antes de llegar al resto de la a
 - Los campos de pantalla llegan intercambiados: `displayResolution` contiene el tamaño en pulgadas y `displaySize` la resolución en píxeles. Se exponen como `screenSize` y `screenResolution`.
 - `dimentions` y `secondaryCmera` se renombran a `dimensions` y `secondaryCamera`.
 - Los valores vacíos (`""` o `"-"`) se convierten en `null`, y la interfaz muestra un valor por defecto. Esto afecta, por ejemplo, a `price` y `weight`, que además se convierten a número.
+- Algunas opciones de almacenamiento llegan con el nombre en blanco (`" "`), como la del Acer DX650. Se conservan, porque el API necesita su código para añadir el producto, y se muestran como «Not specified».
 - Los campos que llegan como lista de textos se unen en un único texto.
 - Un producto del listado que no cumple el contrato se descarta con un aviso en consola. Si no lo cumple ninguno, se trata como un error y no se guarda en la caché.
 - **Un id inexistente devuelve un 500** (`{"message":"An Unexpected Error Occurred","code":0}`), no un 404. No se puede distinguir de un fallo real del servidor, así que la ficha muestra un error genérico con «Try again» y «Back to the list».
