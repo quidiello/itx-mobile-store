@@ -191,13 +191,12 @@ describe('ProductActions', () => {
       await wrapper.get('form').trigger('submit')
 
       expect(button(wrapper).text()).toBe('Adding…')
-      expect(button(wrapper).element.disabled).toBe(true)
+      expect(button(wrapper).attributes('aria-disabled')).toBe('true')
 
       pending.resolve(1)
       await flushPromises()
 
-      expect(button(wrapper).text()).toBe('Add to cart')
-      expect(button(wrapper).element.disabled).toBe(false)
+      expect(button(wrapper).text()).toBe('Added')
     })
 
     it('does not send a second request while one is in progress', async () => {
@@ -208,6 +207,89 @@ describe('ProductActions', () => {
       await wrapper.get('form').trigger('submit')
 
       expect(addToCart).toHaveBeenCalledTimes(1)
+    })
+  })
+
+  describe('confirmation on the button', () => {
+    beforeEach(() => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
+      addToCart.mockResolvedValue(1)
+    })
+
+    afterEach(() => {
+      vi.useRealTimers()
+    })
+
+    async function addOnce(wrapper: Wrapper) {
+      await wrapper.get('form').trigger('submit')
+      await flushPromises()
+    }
+
+    it('says Added with a mark on the button once the product is in the cart', async () => {
+      const { wrapper } = mountActions(singleOptions)
+
+      await addOnce(wrapper)
+
+      expect(button(wrapper).text()).toBe('Added')
+      expect(button(wrapper).find('svg').exists()).toBe(true)
+    })
+
+    it('goes back to Add to cart after a moment', async () => {
+      const { wrapper } = mountActions(singleOptions)
+      await addOnce(wrapper)
+
+      vi.advanceTimersByTime(2000)
+      await wrapper.vm.$nextTick()
+
+      expect(button(wrapper).text()).toBe('Add to cart')
+      expect(button(wrapper).attributes('aria-disabled')).toBeUndefined()
+    })
+
+    it('does not add the product again while it confirms', async () => {
+      const { wrapper } = mountActions(singleOptions)
+      await addOnce(wrapper)
+
+      await wrapper.get('form').trigger('submit')
+
+      expect(addToCart).toHaveBeenCalledTimes(1)
+    })
+
+    it('lets the user add the product again once the confirmation is over', async () => {
+      const { wrapper } = mountActions(singleOptions)
+      await addOnce(wrapper)
+      vi.advanceTimersByTime(2000)
+      await wrapper.vm.$nextTick()
+
+      await addOnce(wrapper)
+
+      expect(addToCart).toHaveBeenCalledTimes(2)
+    })
+
+    it('keeps the button reachable with the keyboard while it confirms', async () => {
+      const { wrapper } = mountActions(singleOptions)
+
+      await addOnce(wrapper)
+
+      expect(button(wrapper).element.disabled).toBe(false)
+      expect(button(wrapper).attributes('aria-disabled')).toBe('true')
+    })
+
+    it('goes back to normal at once when the user changes the selection', async () => {
+      const { wrapper } = mountActions()
+      await addOnce(wrapper)
+
+      await radio(wrapper, 'Storage', '32 GB').setValue(true)
+
+      expect(button(wrapper).text()).toBe('Add to cart')
+    })
+
+    it('does not leave a timer running when it is removed', async () => {
+      const { wrapper } = mountActions(singleOptions)
+      await addOnce(wrapper)
+
+      wrapper.unmount()
+
+      expect(vi.getTimerCount()).toBe(0)
     })
   })
 
@@ -233,6 +315,7 @@ describe('ProductActions', () => {
         'Could not add the product. Please try again.',
       )
       expect(button(wrapper).element.disabled).toBe(false)
+      expect(button(wrapper).attributes('aria-disabled')).toBeUndefined()
     })
 
     it('keeps the selection after adding the product', async () => {
@@ -259,15 +342,19 @@ describe('ProductActions', () => {
     })
 
     it('clears the message when the user adds the product again', async () => {
+      vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] })
       addToCart.mockResolvedValueOnce(1)
       const { wrapper } = mountActions(singleOptions)
       await wrapper.get('form').trigger('submit')
       await flushPromises()
+      vi.advanceTimersByTime(2000)
+      await wrapper.vm.$nextTick()
       addToCart.mockReturnValueOnce(new Promise(() => {}))
 
       await wrapper.get('form').trigger('submit')
 
       expect(wrapper.find('[role="status"]').text()).toBe('')
+      vi.useRealTimers()
     })
   })
 

@@ -1,11 +1,15 @@
 <script setup lang="ts">
-import { computed, nextTick, ref, useId, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
 import type { ProductDetail, ProductOption } from '@/api/schemas'
 import { useCartStore } from '@/stores/cart'
 import { useMediaQuery } from '@/composables/useMediaQuery'
 import { useScrollLock } from '@/composables/useScrollLock'
 import { formatPrice } from '@/utils/formatPrice'
 import ChevronIcon from './icons/ChevronIcon.vue'
+import AlertCircleIcon from './icons/ui/AlertCircleIcon.vue'
+import CheckIcon from './icons/ui/CheckIcon.vue'
+
+const CONFIRMATION_MS = 2000
 
 const props = defineProps<{ product: ProductDetail }>()
 
@@ -16,6 +20,8 @@ const colorCode = ref<number | null>(null)
 const adding = ref(false)
 const result = ref<'added' | 'failed' | null>(null)
 const sheetOpen = ref(false)
+const added = ref(false)
+let confirmation: ReturnType<typeof setTimeout> | undefined
 const optionsId = useId()
 const trigger = useTemplateRef('trigger')
 const options = useTemplateRef('options')
@@ -36,6 +42,16 @@ const hasPrice = computed(() => props.product.price !== null)
 const canAdd = computed(
   () => hasPrice.value && storageCode.value !== null && colorCode.value !== null,
 )
+const label = computed(() => {
+  if (adding.value) return 'Adding…'
+  if (added.value) return 'Added'
+  return hasPrice.value ? 'Add to cart' : 'Not available'
+})
+
+function resetConfirmation() {
+  clearTimeout(confirmation)
+  added.value = false
+}
 
 function firstOption(options: ProductOption[]) {
   return options[0]?.code ?? null
@@ -53,6 +69,7 @@ watch(
 
 watch([storageCode, colorCode, () => props.product], () => {
   result.value = null
+  resetConfirmation()
 })
 
 watch(narrow, (isNarrow) => {
@@ -60,6 +77,8 @@ watch(narrow, (isNarrow) => {
 })
 
 useScrollLock(sheetOpen)
+
+onBeforeUnmount(() => clearTimeout(confirmation))
 
 async function openSheet() {
   sheetOpen.value = true
@@ -92,7 +111,7 @@ function trapFocus(event: KeyboardEvent) {
 
 async function add() {
   if (!hasPrice.value || storageCode.value === null || colorCode.value === null) return
-  if (adding.value) return
+  if (adding.value || added.value) return
 
   adding.value = true
   result.value = null
@@ -103,6 +122,10 @@ async function add() {
       storageCode: storageCode.value,
     })
     result.value = 'added'
+    added.value = true
+    confirmation = setTimeout(() => {
+      added.value = false
+    }, CONFIRMATION_MS)
   } catch {
     result.value = 'failed'
   } finally {
@@ -149,11 +172,9 @@ async function add() {
       <button type="button" class="done" @click="closeSheet">Done</button>
     </div>
 
+    <p class="sr-only" role="status">{{ result === 'added' ? 'Added to cart' : '' }}</p>
+
     <div class="buy">
-      <div class="messages">
-        <p role="status">{{ result === 'added' ? 'Added to cart' : '' }}</p>
-        <p v-if="result === 'failed'" role="alert">Could not add the product. Please try again.</p>
-      </div>
       <button
         ref="trigger"
         type="button"
@@ -170,9 +191,22 @@ async function add() {
           <ChevronIcon direction="up" :size="14" />
         </span>
       </button>
-      <button type="submit" class="submit" :disabled="!canAdd || adding">
-        {{ adding ? 'Adding…' : hasPrice ? 'Add to cart' : 'Not available' }}
+      <button
+        type="submit"
+        class="submit"
+        :class="{ added }"
+        :disabled="!canAdd"
+        :aria-disabled="adding || added ? 'true' : undefined"
+      >
+        <CheckIcon v-if="added" :size="18" />
+        {{ label }}
       </button>
+      <div class="messages">
+        <p v-if="result === 'failed'" role="alert" class="error">
+          <AlertCircleIcon :size="16" />
+          Could not add the product. Please try again.
+        </p>
+      </div>
     </div>
   </form>
 </template>
@@ -238,21 +272,38 @@ fieldset input {
 }
 
 .submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
   width: 100%;
   margin-top: var(--space-3);
   padding: var(--space-3) var(--space-5);
   border-radius: var(--radius-pill);
 }
 
-[role='status'] {
-  margin: var(--space-3) 0 0;
-  color: var(--color-success);
-  font-size: var(--text-sm);
-  font-weight: 500;
+.submit[aria-disabled='true'] {
+  cursor: default;
+  opacity: 0.7;
 }
 
-[role='status']:empty {
-  margin: 0;
+.submit.added,
+.submit.added:hover {
+  background: var(--color-success);
+  opacity: 1;
+}
+
+.error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin: var(--space-3) 0 0;
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+}
+
+.error svg {
+  flex: none;
 }
 
 @media (max-width: 40rem) {
@@ -313,23 +364,16 @@ fieldset input {
 
   .messages {
     position: absolute;
-    right: var(--space-4);
+    right: 0;
     bottom: 100%;
-    left: var(--space-4);
-    margin-bottom: var(--space-2);
+    left: 0;
   }
 
-  [role='status'] {
+  .error {
     margin: 0;
     padding: var(--space-2) var(--space-4);
-    border-radius: var(--radius-pill);
+    border-top: 1px solid var(--color-border);
     background: var(--color-surface);
-    box-shadow: var(--shadow-md);
-    text-align: center;
-  }
-
-  [role='status']:empty {
-    display: none;
   }
 
   .backdrop {
