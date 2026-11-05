@@ -66,6 +66,9 @@ const name = computed(
       description="Something went wrong while contacting the server. Check your connection and try again."
     >
       <button type="button" @click="reload">Try again</button>
+      <RouterLink v-slot="{ href }" to="/" custom>
+        <a :href="href" class="secondary" @click.prevent="goBack">Back to the list</a>
+      </RouterLink>
     </StateMessage>
     <template v-else>
       <div class="layout">

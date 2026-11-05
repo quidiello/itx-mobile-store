@@ -138,6 +138,17 @@ describe('ProductDetailView', () => {
       expect(wrapper.findComponent(ProductDescription).exists()).toBe(false)
     })
 
+    it('offers a way back to the product list', async () => {
+      getProduct.mockRejectedValue(new Error('network down'))
+      const { wrapper, router } = await mountAt('/products/abc')
+      const push = vi.spyOn(router, 'push')
+
+      const link = wrapper.findAll('a').find((item) => item.text() === 'Back to the list')!
+      await link.trigger('click')
+
+      expect(push).toHaveBeenCalledWith('/')
+    })
+
     it('loads the product again when retrying', async () => {
       getProduct.mockRejectedValueOnce(new Error('network down'))
 

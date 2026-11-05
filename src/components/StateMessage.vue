@@ -68,21 +68,29 @@ const role = computed(() => (props.icon === 'error' ? 'alert' : 'status'))
 
 .action {
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
   justify-content: center;
 }
 
-.action :slotted(button) {
+.action :slotted(button),
+.action :slotted(a) {
+  display: inline-flex;
+  align-items: center;
   padding: var(--space-3) var(--space-6);
   border-radius: var(--radius-pill);
+  font-weight: 600;
+  text-decoration: none;
 }
 
-.action :slotted(button.secondary) {
+.action :slotted(.secondary) {
   background: var(--color-accent-soft);
   color: var(--color-accent);
 }
 
-.action :slotted(button.secondary:hover:not(:disabled)) {
+.action :slotted(.secondary:hover:not(:disabled)) {
   background: color-mix(in srgb, var(--color-accent) 18%, white);
   color: var(--color-accent-hover);
+  text-decoration: none;
 }
 </style>
