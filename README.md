@@ -67,6 +67,7 @@ Cada icono es un componente pequeño construido sobre `IconBase`, que fija el ta
 ## Decisiones de diseño
 
 - **Sistema de diseño ligero.** Los colores, el espaciado (múltiplos de 4 px), los radios, las sombras y la escala tipográfica están en `src/styles/tokens.css`. Hay un único color de acento (azul), un fondo gris frío con tarjetas blancas y un lenguaje de «píldoras» compartido por las migas, el buscador, la cesta y los botones, para que la interfaz se lea como un conjunto.
+- **Migas fuera de la cabecera.** El enunciado las sitúa en el header, pero las he sacado a una barra justo debajo porque les veía más sentido junto a la acción de cada página: el buscador en el listado y el botón de volver en la ficha. La cabecera se queda con el logo, que enlaza al inicio, y el contador de la cesta.
 - **Fuente autoalojada.** Inter variable se sirve desde el propio paquete, sin peticiones a servicios externos.
 - **Imágenes con proporción fija 3:4**, que es la de las fotos del API. Así todas las tarjetas miden lo mismo tengan foto o no, y no hay saltos al cargar. La imagen de respaldo, cuando falta la foto, es una ilustración con esa misma proporción.
 - **Esqueletos con la forma del contenido.** Los de carga imitan la tarjeta del listado y la ficha, con las mismas medidas, para que no se mueva nada cuando llegan los datos.
@@ -105,6 +106,7 @@ Los datos se normalizan en `src/api/schemas.ts` antes de llegar al resto de la a
 - Los campos que llegan como lista de textos se unen en un único texto.
 - Un producto del listado que no cumple el contrato se descarta con un aviso en consola. Si no lo cumple ninguno, se trata como un error y no se guarda en la caché.
 - **Un id inexistente devuelve un 500** (`{"message":"An Unexpected Error Occurred","code":0}`), no un 404. No se puede distinguir de un fallo real del servidor, así que la ficha muestra un error genérico con «Try again» y «Back to the list».
+- **`POST /api/cart` siempre responde `{"count":1}`**, añadas lo que añadas. El enunciado indica que la respuesta trae el número de productos de la cesta y que ese es el valor que se muestra en la cabecera, y así lo hace la aplicación. Como el API no lleva la cuenta, el contador se queda en 1. No lo he compensado sumando en el cliente para no mostrar un dato que el API no da.
 
 Las respuestas del API ya normalizadas se guardan en `localStorage` durante 1 hora.
 
