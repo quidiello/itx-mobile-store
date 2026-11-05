@@ -13,7 +13,7 @@ const text = z
     return EMPTY_MARKERS.has(trimmed) ? null : trimmed
   })
 
-// No usar z.coerce.number(): convierte "" en 0
+// Do not use z.coerce.number(): it turns "" into 0
 const numeric = z
   .union([z.string(), z.number()])
   .nullish()
@@ -44,10 +44,10 @@ export const productDetailSchema = productSchema
     battery: text,
     weight: numeric,
     primaryCamera: text,
-    // Con los typos del API
+    // With the typos of the API
     secondaryCmera: text,
     dimentions: text,
-    // Intercambiados en el API: displayResolution trae pulgadas y displaySize píxeles
+    // Swapped in the API: displayResolution carries inches and displaySize carries pixels
     displayResolution: text,
     displaySize: text,
     options: z

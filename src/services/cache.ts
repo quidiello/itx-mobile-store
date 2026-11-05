@@ -31,7 +31,7 @@ export function createCache({ ttlMs, prefix, storage = null }: CacheOptions) {
     try {
       storage?.removeItem(prefix + key)
     } catch {
-      // storage no disponible: se sigue en memoria
+      // storage unavailable: keep going in memory
     }
   }
 
@@ -52,7 +52,7 @@ export function createCache({ ttlMs, prefix, storage = null }: CacheOptions) {
     try {
       storage?.setItem(prefix + key, JSON.stringify(entry))
     } catch {
-      // storage no disponible o lleno: se sigue en memoria
+      // storage unavailable or full: keep going in memory
     }
   }
 

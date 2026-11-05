@@ -5,7 +5,7 @@ export async function focusMainAfterNavigation(
   to: RouteLocationNormalizedLoaded,
   from: RouteLocationNormalizedLoaded,
 ) {
-  // Ni la primera carga ni la búsqueda (que solo cambia la query) deben mover el foco.
+  // Neither the first load nor the search (which only changes the query) should move the focus.
   if (from === START_LOCATION || to.path === from.path) return
 
   await nextTick()

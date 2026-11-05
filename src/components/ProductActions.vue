@@ -72,7 +72,7 @@ function closeSheet() {
   trigger.value?.focus()
 }
 
-// Mientras la hoja está abierta el foco da la vuelta dentro de ella.
+// While the sheet is open the focus wraps around inside it.
 function trapFocus(event: KeyboardEvent) {
   if (!sheetOpen.value || !options.value) return
 

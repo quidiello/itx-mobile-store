@@ -17,7 +17,7 @@ const label = computed(() => `${props.shown} ${rest.value}`)
 const announcement = ref('')
 let timer: ReturnType<typeof setTimeout> | undefined
 
-// Se espera a que el usuario deje de escribir para no leer un número por cada letra.
+// Wait until the user stops typing so a number is not read for every letter.
 watch(label, (value) => {
   clearTimeout(timer)
   timer = setTimeout(() => {
