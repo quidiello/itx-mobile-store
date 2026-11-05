@@ -15,8 +15,8 @@ defineProps<{
 .skeleton {
   display: block;
   height: 1em;
-  border-radius: 4px;
-  background: #e5e7eb;
+  border-radius: var(--radius-md);
+  background: var(--color-border);
   animation: pulse 1.2s ease-in-out infinite;
 }
 
