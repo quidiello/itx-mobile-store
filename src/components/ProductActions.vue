@@ -197,7 +197,7 @@ legend {
 fieldset label {
   position: relative;
   padding: var(--space-2) var(--space-4);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-control);
   border-radius: var(--radius-pill);
   background: var(--color-surface);
   cursor: pointer;
