@@ -88,8 +88,25 @@ button:disabled {
   white-space: nowrap;
 }
 
+.skeleton-block {
+  display: block;
+  border-radius: var(--radius-md);
+  background: var(--color-border);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+  }
+
+  .skeleton-block {
+    animation: none;
   }
 }

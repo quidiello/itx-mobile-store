@@ -6,16 +6,16 @@ const modelWidths = [78, 62, 70, 84]
 
 <template>
   <div class="card">
-    <div class="image"><span class="block" /></div>
+    <div class="image"><span class="skeleton-block" /></div>
     <div class="row">
       <div class="info">
-        <span class="block brand" />
+        <span class="skeleton-block brand" />
         <span
-          class="block model"
+          class="skeleton-block model"
           :style="{ width: `${modelWidths[(index ?? 0) % modelWidths.length]}%` }"
         />
       </div>
-      <span class="block price" />
+      <span class="skeleton-block price" />
     </div>
   </div>
 </template>
@@ -38,14 +38,7 @@ const modelWidths = [78, 62, 70, 84]
   padding: var(--space-2);
 }
 
-.block {
-  display: block;
-  border-radius: var(--radius-md);
-  background: var(--color-border);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-.image .block {
+.image .skeleton-block {
   width: 100%;
   height: 100%;
   border-radius: var(--radius-xl);
@@ -80,17 +73,5 @@ const modelWidths = [78, 62, 70, 84]
   flex: none;
   width: 3.25rem;
   height: 1.5rem;
-}
-
-@keyframes pulse {
-  50% {
-    opacity: 0.5;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .block {
-    animation: none;
-  }
 }
 </style>

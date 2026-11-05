@@ -6,7 +6,7 @@ describe('ProductCardSkeleton', () => {
   it('draws the places of the image, the brand, the model and the price', () => {
     const wrapper = mount(ProductCardSkeleton)
 
-    expect(wrapper.find('.image .block').exists()).toBe(true)
+    expect(wrapper.find('.image .skeleton-block').exists()).toBe(true)
     expect(wrapper.find('.brand').exists()).toBe(true)
     expect(wrapper.find('.model').exists()).toBe(true)
     expect(wrapper.find('.price').exists()).toBe(true)

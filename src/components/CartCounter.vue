@@ -57,13 +57,4 @@ const description = computed(() => `Cart, ${cart.count} ${cart.count === 1 ? 'it
     display: none;
   }
 }
-
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-}
 </style>

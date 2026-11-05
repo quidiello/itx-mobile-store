@@ -4,34 +4,34 @@ const valueWidths = [70, 56, 78, 62, 74]
 
 <template>
   <div class="layout">
-    <div class="image"><span class="block" /></div>
+    <div class="image"><span class="skeleton-block" /></div>
 
     <div class="details">
       <div class="card">
         <div class="head">
-          <span class="block title" />
-          <span class="block price" />
+          <span class="skeleton-block title" />
+          <span class="skeleton-block price" />
         </div>
         <div v-for="(width, n) in valueWidths" :key="n" class="row">
-          <span class="block icon" />
+          <span class="skeleton-block icon" />
           <div class="text">
-            <span class="block label" />
-            <span class="block value" :style="{ width: `${width}%` }" />
+            <span class="skeleton-block label" />
+            <span class="skeleton-block value" :style="{ width: `${width}%` }" />
           </div>
         </div>
       </div>
 
       <div class="card actions">
-        <span class="block legend" />
+        <span class="skeleton-block legend" />
         <div class="pills">
-          <span class="block pill" />
+          <span class="skeleton-block pill" />
         </div>
-        <span class="block legend" />
+        <span class="skeleton-block legend" />
         <div class="pills">
-          <span class="block pill" />
-          <span class="block pill" />
+          <span class="skeleton-block pill" />
+          <span class="skeleton-block pill" />
         </div>
-        <span class="block button" />
+        <span class="skeleton-block button" />
       </div>
     </div>
   </div>
@@ -66,14 +66,7 @@ const valueWidths = [70, 56, 78, 62, 74]
   box-shadow: var(--shadow-sm);
 }
 
-.block {
-  display: block;
-  border-radius: var(--radius-md);
-  background: var(--color-border);
-  animation: pulse 1.2s ease-in-out infinite;
-}
-
-.image .block {
+.image .skeleton-block {
   width: 100%;
   height: 100%;
   border-radius: var(--radius-xl);
@@ -150,12 +143,6 @@ const valueWidths = [70, 56, 78, 62, 74]
   border-radius: var(--radius-pill);
 }
 
-@keyframes pulse {
-  50% {
-    opacity: 0.5;
-  }
-}
-
 @media (max-width: 40rem) {
   .layout {
     grid-template-columns: 1fr;
@@ -169,12 +156,6 @@ const valueWidths = [70, 56, 78, 62, 74]
   .price,
   .actions {
     display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .block {
-    animation: none;
   }
 }
 </style>
