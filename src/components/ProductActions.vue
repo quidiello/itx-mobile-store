@@ -2,6 +2,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, useId, useTemplateRef, watch } from 'vue'
 import type { ProductDetail, ProductOption } from '@/api/schemas'
 import { useCartStore } from '@/stores/cart'
+import { useMediaQuery } from '@/composables/useMediaQuery'
 import { formatPrice } from '@/utils/formatPrice'
 import ChevronIcon from './icons/ChevronIcon.vue'
 
@@ -17,6 +18,7 @@ const sheetOpen = ref(false)
 const optionsId = useId()
 const trigger = useTemplateRef('trigger')
 const options = useTemplateRef('options')
+const narrow = useMediaQuery('(max-width: 40rem)')
 
 const hasOptions = computed(
   () => props.product.options.storages.length > 0 && props.product.options.colors.length > 0,
@@ -71,6 +73,24 @@ function closeSheet() {
   trigger.value?.focus()
 }
 
+// Mientras la hoja está abierta el foco da la vuelta dentro de ella.
+function trapFocus(event: KeyboardEvent) {
+  if (!sheetOpen.value || !options.value) return
+
+  const stops = [...options.value.querySelectorAll<HTMLElement>('input:checked, button')]
+  const first = stops[0]
+  const last = stops[stops.length - 1]
+  if (!first || !last) return
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault()
+    last.focus()
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault()
+    first.focus()
+  }
+}
+
 async function add() {
   if (storageCode.value === null || colorCode.value === null || adding.value) return
 
@@ -100,7 +120,11 @@ async function add() {
       ref="options"
       class="options"
       :class="{ open: sheetOpen }"
+      :role="narrow ? 'dialog' : undefined"
+      :aria-modal="narrow && sheetOpen ? 'true' : undefined"
+      :aria-label="narrow ? 'Choose options' : undefined"
       @keydown.esc="closeSheet"
+      @keydown.tab="trapFocus"
     >
       <span class="grab" aria-hidden="true" />
 
@@ -134,13 +158,14 @@ async function add() {
         ref="trigger"
         type="button"
         class="summary"
-        aria-haspopup="true"
+        aria-haspopup="dialog"
         :aria-expanded="sheetOpen"
         :aria-controls="optionsId"
         @click="openSheet"
       >
+        <span class="sr-only">Change options, </span>
         <strong>{{ formatPrice(product.price) }}</strong>
-        <span>
+        <span class="choice">
           {{ summary }}
           <ChevronIcon direction="up" :size="14" />
         </span>
@@ -270,7 +295,7 @@ fieldset input {
     line-height: 1.2;
   }
 
-  .summary span {
+  .summary .choice {
     display: flex;
     align-items: center;
     gap: var(--space-1);

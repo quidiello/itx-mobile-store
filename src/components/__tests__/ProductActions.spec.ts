@@ -274,7 +274,7 @@ describe('ProductActions', () => {
       const { wrapper } = mountActions()
 
       expect(summaryOf(wrapper).get('strong').text()).toBe('€170')
-      expect(summaryOf(wrapper).get('span').text()).toBe('16 GB · Black')
+      expect(summaryOf(wrapper).get('.choice').text()).toBe('16 GB · Black')
     })
 
     it('shows the new options when the user changes the selection', async () => {
@@ -282,7 +282,7 @@ describe('ProductActions', () => {
 
       await radio(wrapper, 'Storage', '32 GB').setValue(true)
 
-      expect(summaryOf(wrapper).get('span').text()).toBe('32 GB · Black')
+      expect(summaryOf(wrapper).get('.choice').text()).toBe('32 GB · Black')
     })
 
     it('tells that the price is not available when there is none', () => {
@@ -355,7 +355,7 @@ describe('ProductActions', () => {
       await radio(wrapper, 'Storage', '32 GB').setValue(true)
       await wrapper.get('.done').trigger('click')
 
-      expect(wrapper.get('.summary span').text()).toBe('32 GB · Black')
+      expect(wrapper.get('.summary .choice').text()).toBe('32 GB · Black')
     })
 
     it('closes when another product is shown', async () => {
@@ -375,6 +375,120 @@ describe('ProductActions', () => {
       wrapper.unmount()
 
       expect(document.body.style.overflow).toBe('')
+    })
+  })
+
+  describe('accessibility of the options sheet', () => {
+    const optionsOf = (wrapper: Wrapper) => wrapper.get('.options')
+
+    function stubScreen(narrow: boolean) {
+      vi.stubGlobal('matchMedia', () => ({
+        matches: narrow,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+      }))
+    }
+
+    it('announces what the summary button does', () => {
+      const { wrapper } = mountActions()
+
+      expect(wrapper.get('.summary').text()).toContain('Change options')
+      expect(wrapper.get('.summary').attributes('aria-haspopup')).toBe('dialog')
+    })
+
+    it('is a modal dialog with a name on narrow screens while it is open', async () => {
+      stubScreen(true)
+      const { wrapper } = mountActions()
+      await wrapper.vm.$nextTick()
+
+      await wrapper.get('.summary').trigger('click')
+
+      expect(optionsOf(wrapper).attributes('role')).toBe('dialog')
+      expect(optionsOf(wrapper).attributes('aria-modal')).toBe('true')
+      expect(optionsOf(wrapper).attributes('aria-label')).toBe('Choose options')
+    })
+
+    it('is not marked as modal while it is closed', async () => {
+      stubScreen(true)
+      const { wrapper } = mountActions()
+      await wrapper.vm.$nextTick()
+
+      expect(optionsOf(wrapper).attributes('aria-modal')).toBeUndefined()
+    })
+
+    it('is an ordinary part of the page on wide screens', async () => {
+      stubScreen(false)
+      const { wrapper } = mountActions()
+      await wrapper.vm.$nextTick()
+
+      expect(optionsOf(wrapper).attributes('role')).toBeUndefined()
+      expect(optionsOf(wrapper).attributes('aria-label')).toBeUndefined()
+    })
+
+    describe('keyboard', () => {
+      const mounted: Wrapper[] = []
+
+      function mountAttached() {
+        const pinia = createPinia()
+        setActivePinia(pinia)
+        const wrapper = mount(ProductActions, {
+          props: { product: twoStorages },
+          global: { plugins: [pinia] },
+          attachTo: document.body,
+        })
+        mounted.push(wrapper)
+        return wrapper
+      }
+
+      afterEach(() => {
+        mounted.splice(0).forEach((wrapper) => wrapper.unmount())
+      })
+
+      function press(wrapper: Wrapper, init: KeyboardEventInit) {
+        return optionsOf(wrapper).trigger('keydown', { key: 'Tab', ...init })
+      }
+
+      it('goes back to the first option when Tab leaves the last control', async () => {
+        const wrapper = mountAttached()
+        await wrapper.get('.summary').trigger('click')
+        const first = radio(wrapper, 'Storage', '16 GB').element
+        wrapper.get<HTMLButtonElement>('.done').element.focus()
+
+        await press(wrapper, {})
+
+        expect(document.activeElement).toBe(first)
+      })
+
+      it('goes to the Done button when Shift+Tab leaves the first option', async () => {
+        const wrapper = mountAttached()
+        await wrapper.get('.summary').trigger('click')
+        radio(wrapper, 'Storage', '16 GB').element.focus()
+
+        await press(wrapper, { shiftKey: true })
+
+        expect(document.activeElement).toBe(wrapper.get('.done').element)
+      })
+
+      it('lets Tab move on normally in the middle of the sheet', async () => {
+        const wrapper = mountAttached()
+        await wrapper.get('.summary').trigger('click')
+        const middle = radio(wrapper, 'Color', 'Black').element
+        middle.focus()
+
+        await press(wrapper, {})
+
+        expect(document.activeElement).toBe(middle)
+      })
+
+      it('does not hold the focus when the sheet is closed', async () => {
+        const wrapper = mountAttached()
+        const done = wrapper.get<HTMLButtonElement>('.done').element
+        done.focus()
+
+        await press(wrapper, {})
+
+        expect(document.activeElement).toBe(done)
+      })
     })
   })
 })
