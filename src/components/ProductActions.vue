@@ -45,7 +45,7 @@ const canAdd = computed(
 const label = computed(() => {
   if (adding.value) return 'Adding…'
   if (added.value) return 'Added'
-  return hasPrice.value ? 'Add to cart' : 'Not available'
+  return hasPrice.value && hasOptions.value ? 'Add to cart' : 'Not available'
 })
 
 function resetConfirmation() {
@@ -151,7 +151,7 @@ async function add() {
     >
       <span class="grab" aria-hidden="true" />
 
-      <fieldset>
+      <fieldset v-if="product.options.storages.length > 0">
         <legend>Storage</legend>
         <label v-for="option in product.options.storages" :key="option.code">
           <input v-model="storageCode" type="radio" name="storage" :value="option.code" />
@@ -159,7 +159,7 @@ async function add() {
         </label>
       </fieldset>
 
-      <fieldset>
+      <fieldset v-if="product.options.colors.length > 0">
         <legend>Color</legend>
         <label v-for="option in product.options.colors" :key="option.code">
           <input v-model="colorCode" type="radio" name="color" :value="option.code" />
@@ -167,7 +167,9 @@ async function add() {
         </label>
       </fieldset>
 
-      <p v-if="!hasOptions">No options available</p>
+      <p v-if="product.options.storages.length === 0 && product.options.colors.length === 0">
+        No options available
+      </p>
 
       <button type="button" class="done" @click="closeSheet">Done</button>
     </div>

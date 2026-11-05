@@ -17,6 +17,14 @@ const withoutPrice = productDetailSchema.parse(details.sinPrecio)
 const singleOptions: ProductDetail = { ...withoutPrice, price: 100 }
 const manyColors = productDetailSchema.parse(details.muchosColores)
 const noOptions: ProductDetail = { ...twoStorages, options: { colors: [], storages: [] } }
+const onlyStorages: ProductDetail = {
+  ...twoStorages,
+  options: { ...twoStorages.options, colors: [] },
+}
+const onlyColors: ProductDetail = {
+  ...twoStorages,
+  options: { ...twoStorages.options, storages: [] },
+}
 
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -104,6 +112,18 @@ describe('ProductActions', () => {
       expect(button(wrapper).element.disabled).toBe(true)
     })
 
+    it.each([
+      ['Storage', 'Color', onlyStorages],
+      ['Color', 'Storage', onlyColors],
+    ])('shows only the %s group when the product has no %s options', (shown, missing, product) => {
+      const { wrapper } = mountActions(product)
+      const legends = wrapper.findAll('legend').map((legend) => legend.text())
+
+      expect(legends).toContain(shown)
+      expect(legends).not.toContain(missing)
+      expect(wrapper.text()).not.toContain('No options available')
+    })
+
     it('starts again from the options of another product when it changes', async () => {
       const { wrapper } = mountActions(singleOptions)
       expect(radio(wrapper, 'Storage', '32 GB').element.checked).toBe(true)
@@ -125,6 +145,16 @@ describe('ProductActions', () => {
 
     it('is disabled and says so when the product has no price', () => {
       const { wrapper } = mountActions(withoutPrice)
+
+      expect(button(wrapper).element.disabled).toBe(true)
+      expect(button(wrapper).text()).toBe('Not available')
+    })
+
+    it.each([
+      ['color', onlyStorages],
+      ['storage', onlyColors],
+    ])('is disabled and says so when the product has no %s options', (_missing, product) => {
+      const { wrapper } = mountActions(product)
 
       expect(button(wrapper).element.disabled).toBe(true)
       expect(button(wrapper).text()).toBe('Not available')
