@@ -401,9 +401,13 @@ fieldset input {
       visibility 0.25s;
   }
 
+  /* Visible at once on open: focus() is ignored while the sheet is still hidden. */
   .options.open {
     visibility: visible;
     transform: none;
+    transition:
+      transform 0.25s ease,
+      visibility 0s;
   }
 
   .grab {
